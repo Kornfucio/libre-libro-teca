@@ -15,7 +15,8 @@ class Publicacion extends Model
         'centros_libro_id',
         'descripcion',
         'estado_id',
-        'fecha_publicacion'
+        'fecha_publicacion',
+        'imagen'
     ];
 
     public function usuario()

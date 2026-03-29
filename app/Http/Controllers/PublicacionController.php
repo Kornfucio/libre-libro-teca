@@ -5,128 +5,161 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Publicacion;
 use App\Models\CentroLibro;
-use App\Models\Estado;
 use Illuminate\Support\Facades\Auth;
 
 class PublicacionController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listado público de publicaciones
      */
     public function index()
     {
-       $publicaciones=Publicacion::with([
-        'usuario',
-        'centroLibro.libro.curso',
-        'centroLibro.libro.asignatura',
-        'estado'
-       ])
-       ->where('estado_id', 3) //Muestra los libros que están publicados
-       ->latest()
-       ->paginate(10);
+        $publicaciones = Publicacion::with([
+                'usuario',
+                'centroLibro.libro.curso',
+                'centroLibro.libro.asignatura',
+                'estado'
+            ])
+            ->where('estado_id', 3) // solo publicadas
+            ->latest()
+            ->paginate(10);
 
-       return view ('publicaciones.index', compact('publicaciones'));
+        return view('publicaciones.index', compact('publicaciones'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Listado de MIS publicaciones
+     */
+    public function misPublicaciones()
+    {
+        $publicaciones = Publicacion::with([
+                'centroLibro.libro',
+                'usuario'
+            ])
+            ->where('usuario_id', Auth::id())
+            ->latest()
+            ->get();
+
+        return view('publicaciones.mis-publicaciones', compact('publicaciones'));
+    }
+
+    /**
+     * Formulario de creación
      */
     public function create()
     {
-        $centroId=Auth::user()->centro_id;
+        $centroId = Auth::user()->centro_id;
 
-        $centroLibros=CentroLibro::with('libro')
-        ->where('centro_id',$centroId)
-        ->get();
+        $centroLibros = CentroLibro::with('libro')
+            ->where('centro_id', $centroId)
+            ->get();
 
-        return view ('publicaciones.create', compact('centroLibros'));
+        return view('publicaciones.create', compact('centroLibros'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Guardar publicación
      */
     public function store(Request $request)
     {
         $request->validate([
-            'centros_libro_id'=>'required|exists:centro_libro,id',
-            'descripcion'=>'nullable|string|max:500'
+            'centro_libro_id' => 'required|exists:centros_libro,id',
+            'descripcion' => 'nullable|string|max:500',
+            'imagen' => 'nullable|image|max:2048',
+            'condiciones' => 'accepted'
         ]);
 
+        // 📸 Imagen
+        if ($request->hasFile('imagen')) {
+            $rutaImagen = $request->file('imagen')->store('publicaciones', 'public');
+        } else {
+            $rutaImagen = 'images/no-image.png';
+        }
+
         Publicacion::create([
-            'usuario_id'=> Auth::id(),
-            'centros_libro_id'=> $request->centro_libro_id,
-            'descripcion'=> $request->descripcion,
-            'estado_id' =>3,
-            'fecha_publicacion'=>now()
+            'usuario_id' => Auth::id(),
+            'centros_libro_id' => $request->centro_libro_id,
+            'descripcion' => $request->descripcion,
+            'estado_id' => 3, // publicada
+            'fecha_publicacion' => now(),
+            'imagen' => $rutaImagen
         ]);
 
         return redirect()
             ->route('publicaciones.index')
-            ->with('success','Publicación creada correctamente');
+            ->with('success', 'Publicación creada correctamente');
     }
 
     /**
-     * Display the specified resource.
+     * Mostrar una publicación
      */
     public function show(string $id)
     {
-        $publicacion= Publicacion::with([
-            'usuario',
-            'centroLibro.libro.curso',
-            'centroLibro.libro.asignatura',
-            'solicitudes.usuario',
-            'estado'
-        ])
-        ->where('estado_id', 1)
-        ->findOrFail($id);
+        $publicacion = Publicacion::with([
+                'usuario',
+                'centroLibro.libro.curso',
+                'centroLibro.libro.asignatura',
+                'solicitudes.usuario',
+                'estado'
+            ])
+            ->findOrFail($id);
 
         return view('publicaciones.show', compact('publicacion'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Formulario de edición
      */
     public function edit(string $id)
     {
-       $publicacion=Publicacion::findOrFail($id);
+        $publicacion = Publicacion::findOrFail($id);
 
-       if($publicacion->usuario_id != Auth::id()) {
-        abort(403);
-       }
+        if ($publicacion->usuario_id !== Auth::id()) {
+            abort(403);
+        }
 
-       return view('publicaciones.edit', compact('publicacion'));
+        return view('publicaciones.edit', compact('publicacion'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualizar publicación
      */
     public function update(Request $request, string $id)
     {
-        $publicacion=Publicacion::findOrFail($id);
+        $publicacion = Publicacion::findOrFail($id);
 
-        if($publicacion->usuario_id != Auth::id()) {
-        abort(403);
-       }
+        if ($publicacion->usuario_id !== Auth::id()) {
+            abort(403);
+        }
 
-       $request->validate(['descripcion'=>'nullable|string|max:500']);
-        $publicacion->update(['descripcion'=>$request->descripcion]);
-       return redirect()
-            ->route('publicaciones.show',$publicacion->id)
-            ->with('success','Publicación actualizada');
+        $request->validate([
+            'descripcion' => 'nullable|string|max:500'
+        ]);
+
+        $publicacion->update([
+            'descripcion' => $request->descripcion
+        ]);
+
+        return redirect()
+            ->route('publicaciones.show', $publicacion->id)
+            ->with('success', 'Publicación actualizada');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Borrado lógico
      */
     public function destroy(string $id)
     {
-        $publicacion=Publicacion::findOrFail($id);
+        $publicacion = Publicacion::findOrFail($id);
 
-        if($publicacion->usuario_id != Auth::id()) {
-        abort(403);
+        if ($publicacion->usuario_id !== Auth::id()) {
+            abort(403);
         }
 
-        $publicacion->update(['estado_id', 12 ]); //borrado lógico, sólo no lo mostramos, no borramos publicaciones
+        // estado 12 = eliminada (ajusta según tu tabla estados)
+        $publicacion->update([
+            'estado_id' => 12
+        ]);
 
         return redirect()
             ->route('publicaciones.index')
