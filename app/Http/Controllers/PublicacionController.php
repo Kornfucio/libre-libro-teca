@@ -23,21 +23,28 @@ public function index(Request $request)
     ]);
 
     // FILTROS POR ETAPA, CURSO Y ASIGNATURA
+    //Contemplo la posibilidad de que se apliquen uno o varios filtros a la vez, por eso uso whereHas anidados y condicionales dentro de cada uno
+    //Si no se ha seleccionado ningún filtro, se mostrarán todas las publicaciones (sin aplicar whereHas)
+    if ($request->filled('etapa_id') || $request->filled('curso_id') || $request->filled('asignatura_id')) {
+
     $query->whereHas('centroLibro.libro', function ($q) use ($request) {
 
-    $q->whereHas('curso', function ($q2) use ($request) {
-       $q2->where('etapa_id', $request->etapa_id);
-    });
+        if (!empty($request->etapa_id)) {
+            $q->whereHas('curso', function ($q2) use ($request) {
+                $q2->where('etapa_id', $request->etapa_id);
+            });
+        }
 
-    $q->when($request->curso_id, function ($q) use ($request) {
-        $q->where('curso_id', $request->curso_id);
-    });
+        if (!empty($request->curso_id)) {
+            $q->where('curso_id', $request->curso_id);
+        }
 
-    $q->when($request->asignatura_id, function ($q) use ($request) {
-        $q->where('asignatura_id', $request->asignatura_id);
+        if (!empty($request->asignatura_id)) {
+            $q->where('asignatura_id', $request->asignatura_id);
+        }
     });
-    });
-
+    }
+    // Si el usuario está autenticado, excluyo las publicaciones que ya ha solicitado (en estado pendiente o aceptada)
     // EVITAR PUBLICACIONES YA SOLICITADAS
     if (auth()->check()) {
         $query->whereDoesntHave('solicitudes', function ($q) {

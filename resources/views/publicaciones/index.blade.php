@@ -49,7 +49,7 @@
                         @endforeach
                         </select>
 
-                        <!-- ASIGNATURA -->
+                        <!-- Combo asignatura   -->
                         <select name="asignatura_id" class="border p-2 rounded">
                             <option value="">Todas las asignaturas</option>
                             @foreach ($asignaturas as $asignatura)
