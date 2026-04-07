@@ -22,12 +22,17 @@ class Libro extends Model
         return $this->belongsTo(Curso::class, 'curso_id');
     }
 
-        public function asignatura()
+    public function asignatura()
     {
         return $this->belongsTo(Asignatura::class, 'asignatura_id');
     }
 
-            public function centros()
+    public function etapa()
+    {
+        return $this->belongsTo(Etapa::class, 'etapa_id');
+    }
+
+    public function centros()
     {
         return $this->hasMany(CentroLibro::class, 'libro_id');
     }

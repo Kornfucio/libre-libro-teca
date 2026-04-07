@@ -12,20 +12,55 @@ class PublicacionController extends Controller
     /**
      * Listado público de publicaciones
      */
-    public function index()
-    {
-        $publicaciones = Publicacion::with([
-                'usuario',
-                'centroLibro.libro.curso',
-                'centroLibro.libro.asignatura',
-                'estado'
-            ])
-            ->where('estado_id', 3) // solo publicadas
-            ->latest()
-            ->paginate(10);
+public function index(Request $request)
+{
+    $query = Publicacion::with([
+        'usuario',
+        'centroLibro.libro.curso',
+        'centroLibro.libro.asignatura',
+        'centroLibro.libro.etapa',
+        'solicitudes'
+    ]);
 
-        return view('publicaciones.index', compact('publicaciones'));
+    // FILTROS POR ETAPA, CURSO Y ASIGNATURA
+    $query->whereHas('centroLibro.libro', function ($q) use ($request) {
+
+    $q->whereHas('curso', function ($q2) use ($request) {
+       $q2->where('etapa_id', $request->etapa_id);
+    });
+
+    $q->when($request->curso_id, function ($q) use ($request) {
+        $q->where('curso_id', $request->curso_id);
+    });
+
+    $q->when($request->asignatura_id, function ($q) use ($request) {
+        $q->where('asignatura_id', $request->asignatura_id);
+    });
+    });
+
+    // EVITAR PUBLICACIONES YA SOLICITADAS
+    if (auth()->check()) {
+        $query->whereDoesntHave('solicitudes', function ($q) {
+            $q->where('usuario_id', auth()->id())
+              ->whereIn('estado_id', [8, 9]);
+        });
     }
+
+    // PAGINACIÓN
+    $publicaciones = $query->paginate(20)->withQueryString();
+
+    // DATOS PARA LOS SELECTS
+    $etapas = \App\Models\Etapa::all();
+    $cursos = \App\Models\Curso::all();
+    $asignaturas = \App\Models\Asignatura::all();
+
+    return view('publicaciones.index', compact(
+        'publicaciones',
+        'etapas',
+        'cursos',
+        'asignaturas'
+    ));
+}
 
     /**
      * Listado de MIS publicaciones
@@ -69,7 +104,7 @@ class PublicacionController extends Controller
             'condiciones' => 'accepted'
         ]);
 
-        // 📸 Imagen
+        // Imagen
         if ($request->hasFile('imagen')) {
             $rutaImagen = $request->file('imagen')->store('publicaciones', 'public');
         } else {
@@ -96,15 +131,27 @@ class PublicacionController extends Controller
     public function show(string $id)
     {
         $publicacion = Publicacion::with([
-                'usuario',
-                'centroLibro.libro.curso',
-                'centroLibro.libro.asignatura',
-                'solicitudes.usuario',
-                'estado'
-            ])
-            ->findOrFail($id);
+            'usuario',
+            'centroLibro.libro.curso',
+            'centroLibro.libro.asignatura',
+            'solicitudes.usuario',
+            'estado'
+        ])->findOrFail($id);
 
-        return view('publicaciones.show', compact('publicacion'));
+    //Comprobar si el usuario autenticado ya ha solicitado esta publicación
+        // Obtener la solicitud del usuario autenticado (si existe)
+        $solicitudUsuario = null;
+
+    if (auth()->check()) {
+        $solicitudUsuario = \App\Models\SolicitudIntercambio::where('publicacion_id', $publicacion->id)
+            ->where('usuario_id', auth()->id())
+            ->first();
+    }
+
+        return view('publicaciones.show', [
+        'publicacion' => $publicacion,
+        'solicitudUsuario' => $solicitudUsuario
+     ]);
     }
 
     /**

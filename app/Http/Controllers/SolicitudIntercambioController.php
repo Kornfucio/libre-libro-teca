@@ -13,21 +13,35 @@ class SolicitudIntercambioController extends Controller
      */
     public function index()
     {
-        // Solicitudes que YO he enviado
+        // Solicitudes que YO he enviado (HISTÓRICO COMPLETO)
         $enviadas = SolicitudIntercambio::where('usuario_id', auth()->id())
-            ->where('estado_id', 8)
             ->with(['publicacion.centroLibro.libro', 'publicacion.usuario', 'estado'])
             ->get();
 
-        // Solicitudes que YO he recibido (sobre mis publicaciones)
+        // Solicitudes que YO he recibido (SOLO PENDIENTES)
         $recibidas = SolicitudIntercambio::whereHas('publicacion', function ($query) {
-            $query->where('usuario_id', auth()->id());
-        })
-            ->where('estado_id', 8) // SOLO pendientes
+                $query->where('usuario_id', auth()->id());
+            })
+            ->where('estado_id', 8)
             ->with(['publicacion.centroLibro.libro', 'usuario', 'estado'])
-         ->get();
+            ->get();
 
-        return view('solicitudes.index', compact('enviadas', 'recibidas'));
+        // Indicadores
+        $aceptadasCount = $enviadas->where('estado_id', 9)->count();
+
+        // Separación por pestañas
+        $pendientes = $enviadas->where('estado_id', 8);
+        $aceptadas = $enviadas->where('estado_id', 9);
+        $rechazadas = $enviadas->where('estado_id', 10);
+
+        return view('solicitudes.index', compact(
+            'enviadas',
+            'recibidas',
+            'aceptadasCount',
+            'pendientes',
+            'aceptadas',
+            'rechazadas'
+        ));
     }
 
     /**
@@ -35,16 +49,14 @@ class SolicitudIntercambioController extends Controller
      */
     public function store(Publicacion $publicacion)
     {
-        // Evitar solicitar tu propio libro
         if ($publicacion->usuario_id === auth()->id()) {
             return back()->with('error', 'No puedes solicitar tu propia publicación');
         }
 
-        // Crear solicitud
         SolicitudIntercambio::create([
             'usuario_id' => auth()->id(),
             'publicacion_id' => $publicacion->id,
-            'estado_id' => 8 // pendiente
+            'estado_id' => 8
         ]);
 
         return back()->with('success', 'Solicitud enviada correctamente');
@@ -54,24 +66,23 @@ class SolicitudIntercambioController extends Controller
      * Aceptar solicitud
      */
     public function aceptar($id)
-{
-    $solicitud = SolicitudIntercambio::findOrFail($id);
+    {
+        $solicitud = SolicitudIntercambio::findOrFail($id);
 
-    if ($solicitud->publicacion->usuario_id !== auth()->id()) {
-        abort(403);
+        if ($solicitud->publicacion->usuario_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $solicitud->estado_id = 9;
+        $solicitud->save();
+
+        SolicitudIntercambio::where('publicacion_id', $solicitud->publicacion_id)
+            ->where('id', '!=', $solicitud->id)
+            ->update(['estado_id' => 10]);
+
+        return back()->with('success', 'Solicitud aceptada');
     }
 
-    // Aceptar la seleccionada
-    $solicitud->estado_id = 9;
-    $solicitud->save();
-
-    // Rechazar el resto automáticamente
-    SolicitudIntercambio::where('publicacion_id', $solicitud->publicacion_id)
-        ->where('id', '!=', $solicitud->id)
-        ->update(['estado_id' => 10]);
-
-    return back()->with('success', 'Solicitud aceptada');
-}
     /**
      * Rechazar solicitud
      */
@@ -79,12 +90,11 @@ class SolicitudIntercambioController extends Controller
     {
         $solicitud = SolicitudIntercambio::findOrFail($id);
 
-        // Seguridad
         if ($solicitud->publicacion->usuario_id !== auth()->id()) {
             abort(403);
         }
 
-        $solicitud->estado_id = 10; // rechazada
+        $solicitud->estado_id = 10;
         $solicitud->save();
 
         return back()->with('success', 'Solicitud rechazada');

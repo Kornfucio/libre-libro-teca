@@ -22,7 +22,8 @@
                     Compromisos
                 </a>
 
-                <a href="#" class="block px-4 py-2 border rounded bg-orange-500 text-white hover:bg-orange-600">
+                <a href="{{ route('publicaciones.index') }}"
+                    class="block px-4 py-2 border rounded bg-orange-500 text-white hover:bg-orange-600">
                     Buscador
                 </a>
 
@@ -37,26 +38,74 @@
                     <img src="{{ asset('build/images/logo.png') }}" alt="Logo" class="h-40 w-auto mx-auto block">
                 </h1>
                 <p class="text-gray-600 mt-4 leading-relaxed" style="text-align:center">
-                    Si tienes alguna pregunta, sugerencia o simplemente quieres ponerte en contacto con nosotros, no dudes en enviarnos un mensaje. Estamos aquí para ayudarte y escuchar tus comentarios. Puedes utilizar el siguiente formulario para enviarnos tu consulta, o si lo prefieres, puedes escribirnos
-                    directamente a nuestro correo electrónico <a href="mailto:admin@libre-libro-teca.org">admin@libre-libro-teca.org</a>
+                    Si tienes alguna pregunta, sugerencia o simplemente quieres ponerte en contacto con nosotros, no
+                    dudes en enviarnos un mensaje. Estamos aquí para ayudarte y escuchar tus comentarios. Puedes
+                    utilizar el siguiente formulario para enviarnos tu consulta, o si lo prefieres, puedes escribirnos
+                    directamente a nuestro correo electrónico <a
+                        href="mailto:admin@libre-libro-teca.org">admin@libre-libro-teca.org</a>
                 </p>
                 <form class="mt-6 space-y-6">
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
-                        <input type="text" id="name" name="name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500">
+                        <input type="text" id="name" name="name"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500">
                     </div>
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
-                        <input type="email" id="email" name="email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500">
+                        <input type="email" id="email" name="email"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500">
                     </div>
                     <div>
                         <label for="message" class="block text-sm font-medium text-gray-700">Mensaje</label>
-                        <textarea id="message" name="message" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"></textarea>
+                        <textarea id="message" name="message" rows="4"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"></textarea>
                     </div>
-                    <button type="submit" class="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">Enviar</button>
-                </form>
-            </section>
+                    <div>
+                        <select id="subject" name="subject"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
+                            required>
+                            <option value="">Selecciona un asunto</option>
+                            <option value="general">Consulta general</option>
+                            <option value="sugerencia">Sugerencia</option>
+                            <option value="problema">Reportar un problema</option>
+                        </select>
+                    </div>
+                    <button type="submit" onclick="mostrarMensaje()"
+                        class="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">Enviar</button>
 
+                    <a href="{{ route('home') }}"
+                        class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
+                        Volver
+                    </a>
+                </form>
+                <div id="msg" style="display:none" class="bg-green-100 text-green-800 p-4 rounded mb-4">
+                    El mensaje ha sido enviado, te responderemos a la mayor brevedad posible.
+                </div>
+                <div id="msgerr" style="display:none" class="text-red-800 p-4 rounded mb-4">
+                    Por favor, ingresa un asunto para tu mensaje.
+                </div>
+            </section>
+            <script>
+                function mostrarMensaje() {
+                    const form = document.getElementById('contactForm');
+
+                    // Si el formulario no es válido, deja que HTML muestre errores
+                    if (!form.checkValidity()) {
+                        form.reportValidity(); // muestra mensajes nativos
+                        return;
+                    }
+
+                    //Mostrar mensaje de éxito
+                    document.getElementById('msg').style.display = 'block';
+
+                    // Ocultar mensaje de error por si acaso
+                    const err = document.getElementById('msgerr');
+                    if (err) err.style.display = 'none';
+
+                    // Limpiar formulario
+                    form.reset();
+                }
+            </script>
         </div>
 
     </main>

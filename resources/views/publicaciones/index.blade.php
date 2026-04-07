@@ -22,6 +22,54 @@
         <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             <article class="bg-white shadow rounded-lg overflow-hidden">
+                <!--Combo buscador por etapa, curso y asignatura-->
+                <div class="p-4 border-b bg-gray-50">
+                    <form method="GET" action="{{ route('publicaciones.index') }}" class="flex gap-2">
+
+                        <!-- Combo etapa  -->
+                        <select name="etapa_id" id="etapa"class="border p-2 rounded">
+                            <option value="">Todas las etapas</option>
+                            @foreach ($etapas as $etapa)
+                                <option value="{{ $etapa->id }}" {{ request('etapa_id') == $etapa->id ? 'selected' : '' }}>
+                                    {{ $etapa->nombre_etapa }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <!-- Combo curso  -->
+
+                        <select name="curso_id" id="curso" class="border p-2 rounded">
+                        <option value="">Todos los cursos</option>
+                        @foreach ($cursos as $curso)
+                        <option
+                            value="{{ $curso->id }}"
+                            data-etapa="{{ $curso->etapa_id }}"
+                            {{ request('curso_id') == $curso->id ? 'selected' : '' }}>
+                            {{ $curso->nombre_curso }}
+                        </option>
+                        @endforeach
+                        </select>
+
+                        <!-- ASIGNATURA -->
+                        <select name="asignatura_id" class="border p-2 rounded">
+                            <option value="">Todas las asignaturas</option>
+                            @foreach ($asignaturas as $asignatura)
+                                <option value="{{ $asignatura->id }}" {{ request('asignatura_id') == $asignatura->id ? 'selected' : '' }}>
+                                    {{ $asignatura->asignatura }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <!-- BOTONES -->
+                        <button class="bg-blue-500 text-white px-4 rounded">
+                            Buscar
+                        </button>
+
+                        <a href="{{ route('publicaciones.index') }}" class="bg-gray-300 px-4 rounded flex items-center">
+                            Limpiar
+                        </a>
+
+                    </form>
+                </div>
 
                 <table class="min-w-full border border-gray-200">
 
@@ -86,7 +134,7 @@
                                                     </a>
 
                                                     @auth
-                                                        @if($publicacion->usuario_id == auth()->id())
+                                                        @if($publicacion->usuario_id === auth()->id())
 
                                                             <!-- Editar -->
                                                             <a href="{{ route('publicaciones.edit', $publicacion->id) }}"
@@ -107,14 +155,39 @@
 
                                                         @else
 
-                                                            <!-- SOLICITAR -->
-                                                            <form method="POST" action="{{ route('solicitudes.store', $publicacion->id) }}"
-                                                                class="inline">
-                                                                @csrf
-                                                                <button type="submit" class="text-green-600 hover:underline">
-                                                                    Solicitar
-                                                                </button>
-                                                            </form>
+                                                            @php
+                                                                $solicitudUsuario = $publicacion->solicitudes
+                                                                    ->where('user_id', auth()->id())
+                                                                    ->first();
+                                                            @endphp
+
+                                                            @if(!$solicitudUsuario)
+
+                                                                <form method="POST" action="{{ route('solicitudes.store', $publicacion->id) }}"
+                                                                    class="inline">
+                                                                    @csrf
+                                                                    <button type="submit" class="text-green-600 hover:underline">
+                                                                        Solicitar
+                                                                    </button>
+                                                                </form>
+
+                                                            @elseif($solicitudUsuario->estado_id == 8)
+                                                                <span class="text-yellow-600">Pendiente</span>
+
+                                                            @elseif($solicitudUsuario->estado_id == 9)
+                                                                <span class="text-green-600">Aceptado</span>
+
+                                                            @elseif($solicitudUsuario->estado_id == 10)
+
+                                                                <form method="POST" action="{{ route('solicitudes.store', $publicacion->id) }}"
+                                                                    class="inline">
+                                                                    @csrf
+                                                                    <button type="submit" class="text-red-600 hover:underline">
+                                                                        Reintentar
+                                                                    </button>
+                                                                </form>
+
+                                                            @endif
 
                                                         @endif
                                                     @endauth
@@ -136,14 +209,52 @@
             </article>
 
         </section>
+
         <br>
+
         <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-4">
+            @auth
                 <a href="{{ route('dashboard') }}"
                     class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
                     Volver
                 </a>
-            </div>
+            @else
+                <a href="{{ route('home') }}"
+                    class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
+                    Volver
+                </a>
+            @endauth
         </section>
+        <script> <!-- FILTRO DEPENDIENTE DE CURSOS POR ETAPA -->
+    const etapaSelect = document.getElementById('etapa');
+    const cursoSelect = document.getElementById('curso');
+
+    function filtrarCursos() {
+        let etapaId = etapaSelect.value;
+        let opciones = cursoSelect.querySelectorAll('option');
+
+        opciones.forEach(option => {
+            if (!option.value) return; // "Todos los cursos"
+
+            if (etapaId === "" || option.dataset.etapa === etapaId) {
+                option.style.display = "block";
+            } else {
+                option.style.display = "none";
+            }
+        });
+
+        // Resetear curso si no pertenece a la etapa
+        let selected = cursoSelect.selectedOptions[0];
+        if (selected && selected.dataset.etapa !== etapaId) {
+            cursoSelect.value = "";
+        }
+    }
+
+    // Evento al cambiar etapa
+    etapaSelect.addEventListener('change', filtrarCursos);
+
+    // Ejecutar al cargar (IMPORTANTE)
+    document.addEventListener('DOMContentLoaded', filtrarCursos);
+</script>
     </main>
 </x-app-layout>

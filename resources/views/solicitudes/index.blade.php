@@ -10,7 +10,7 @@
     <main class="py-6">
         <section class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
-            <!-- 🔔 MENSAJES -->
+            <!-- MENSAJES -->
             @if(session('success'))
                 <div class="bg-green-100 text-green-800 px-4 py-2 rounded">
                     {{ session('success') }}
@@ -23,61 +23,94 @@
                 </div>
             @endif
 
-            <!-- 🔵 SOLICITUDES ENVIADAS -->
+            <!-- RESUMEN -->
+            @if($aceptadasCount > 0)
+                <div class="bg-green-100 text-green-800 px-4 py-2 rounded">
+                    Tienes {{ $aceptadasCount }} solicitudes aceptadas
+                </div>
+            @endif
+
+            <!-- SOLICITUDES ENVIADAS -->
             <article class="bg-white shadow rounded-lg overflow-hidden">
-                <header class="bg-gray-100 px-4 py-2">
+
+                <header class="bg-gray-100 px-4 py-2 flex justify-between items-center">
                     <h2 class="font-semibold text-lg">Mis solicitudes</h2>
+
+                    @if($aceptadasCount > 0)
+                        <span class="bg-green-500 text-white px-2 py-1 rounded-full text-sm">
+                            {{ $aceptadasCount }}
+                        </span>
+                    @endif
                 </header>
 
-                <table class="min-w-full border border-gray-200">
-                    <thead>
-                        <tr>
-                            <th class="px-4 py-2 text-left">Libro</th>
-                            <th class="px-4 py-2 text-left">Propietario</th>
-                            <th class="px-4 py-2 text-left">Estado</th>
-                        </tr>
-                    </thead>
+                <!-- PESTAÑAS -->
+                <div class="flex gap-4 px-4 pt-4 border-b">
+                    <button onclick="mostrarTab('pendientes')" class="tab-btn">
+                        Pendientes ({{ $pendientes->count() }})
+                    </button>
+                    <button onclick="mostrarTab('aceptadas')" class="tab-btn">
+                        Aceptadas ({{ $aceptadas->count() }})
+                    </button>
+                    <button onclick="mostrarTab('rechazadas')" class="tab-btn">
+                        Rechazadas ({{ $rechazadas->count() }})
+                    </button>
+                </div>
 
-                    <tbody>
-                        @forelse ($enviadas as $solicitud)
-                            <tr class="border-t hover:bg-gray-50">
-                                <td class="px-4 py-2">
-                                    {{ $solicitud->publicacion->centroLibro->libro->titulo ?? '-' }}
-                                </td>
+                <!-- PENDIENTES -->
+                <div id="pendientes" class="tab-content p-4">
+                    @forelse($pendientes as $solicitud)
+                        <div class="border-b py-2 p-2 mb-2 rounded flex justify-between items-center">
 
-                                <td class="px-4 py-2">
-                                    {{ $solicitud->publicacion->usuario->nombre ?? '-' }}
-                                </td>
+                            <div class="flex items-center gap-2">
+                                <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
+                                <span class="text-yellow-600">Pendiente</span>
+                            </div>
 
-                                <td class="px-4 py-2">
-                                    @php
-                                        $estado = strtolower($solicitud->estado->nombre ?? 'pendiente');
-                                    @endphp
+                            <a href="{{ route('publicaciones.show', $solicitud->publicacion->id) }}"
+                                class="text-blue-600 hover:underline">
+                                Ver detalles
+                            </a>
 
-                                    <span class="
-                                            px-2 py-1 rounded text-sm font-semibold
-                                            @if($estado == 'pendiente') bg-yellow-100 text-yellow-800
-                                            @elseif($estado == 'aceptada') bg-green-100 text-green-800
-                                            @elseif($estado == 'rechazada') bg-red-100 text-red-800
-                                            @else bg-gray-100 text-gray-800
-                                            @endif
-                                        ">
-                                        {{ ucfirst($estado) }}
-                                    </span>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="px-4 py-4 text-center text-gray-500">
-                                    No has realizado solicitudes
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </div>
+
+                    @empty
+                        <p class="text-gray-500">No hay solicitudes pendientes</p>
+                    @endforelse
+                </div>
+
+                <!-- ACEPTADAS -->
+                <div id="aceptadas" class="tab-content p-4 hidden">
+                    @forelse($aceptadas as $solicitud)
+                        <div class="bg-green-50 p-2 mb-2 rounded flex justify-between items-center">
+                            <span>
+                                <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
+                            </span>
+
+                            <a href="{{ route('publicaciones.show', $solicitud->publicacion->id) }}"
+                                class="text-blue-600 hover:underline">
+                                Ver detalles
+                            </a>
+                        </div>
+                    @empty
+                        <p class="text-gray-500">No hay solicitudes aceptadas</p>
+                    @endforelse
+                </div>
+
+                <!-- RECHAZADAS -->
+                <div id="rechazadas" class="tab-content p-4 hidden">
+                    @forelse($rechazadas as $solicitud)
+                        <div class="bg-red-50 p-2 mb-2 rounded">
+                            <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
+                            <span class="text-red-600 ml-2">Rechazada</span>
+                        </div>
+                    @empty
+                        <p class="text-gray-500">No hay solicitudes rechazadas</p>
+                    @endforelse
+                </div>
+
             </article>
 
-            <!-- 🟣 SOLICITUDES RECIBIDAS -->
+            <!-- SOLICITUDES RECIBIDAS -->
             <article class="bg-white shadow rounded-lg overflow-hidden">
                 <header class="bg-gray-100 px-4 py-2">
                     <h2 class="font-semibold text-lg">Solicitudes recibidas</h2>
@@ -95,6 +128,10 @@
 
                     <tbody>
                         @forelse ($recibidas as $solicitud)
+                            @php
+                                $estado = strtolower($solicitud->estado->nombre ?? 'pendiente');
+                            @endphp
+
                             <tr class="border-t hover:bg-gray-50">
 
                                 <td class="px-4 py-2">
@@ -106,20 +143,7 @@
                                 </td>
 
                                 <td class="px-4 py-2">
-                                    @php
-                                        $estado = strtolower($solicitud->estado->nombre ?? 'pendiente');
-                                    @endphp
-
-                                    <span class="
-                                            px-2 py-1 rounded text-sm font-semibold
-                                            @if($estado == 'pendiente') bg-yellow-100 text-yellow-800
-                                            @elseif($estado == 'aceptada') bg-green-100 text-green-800
-                                            @elseif($estado == 'rechazada') bg-red-100 text-red-800
-                                            @else bg-gray-100 text-gray-800
-                                            @endif
-                                        ">
-                                        {{ ucfirst($estado) }}
-                                    </span>
+                                    {{ ucfirst($estado) }}
                                 </td>
 
                                 <td class="px-4 py-2 space-x-2">
@@ -161,7 +185,9 @@
             </article>
 
         </section>
+
         <br>
+
         <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-4">
                 <a href="{{ route('dashboard') }}"
@@ -171,4 +197,11 @@
             </div>
         </section>
     </main>
+
+    <script> <!-- Script para manejar las pestañas con los distintos estados de las solicitudes -->
+        function mostrarTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tab).classList.remove('hidden');
+        }
+    </script>
 </x-app-layout>

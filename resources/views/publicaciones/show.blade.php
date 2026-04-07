@@ -4,13 +4,17 @@
     </x-slot>
 
     <main class="py-6">
+
+
         <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
 
             <!-- IMAGEN -->
             <div class="mb-4">
                 @if ($publicacion->imagen)
-                    <img src="{{ asset('storage/' . $publicacion->imagen, 'publicaciones')}}"
-                        class="w-48 h-48 object-cover rounded">
+                            <!-- Si la imagen es una ruta de almacenamiento, usar asset('storage/'), si es una URL completa, usarla directamente -->
+                            <img src="{{ Str::startsWith($publicacion->imagen, 'publicaciones')
+                    ? asset('storage/' . $publicacion->imagen)
+                    : asset($publicacion->imagen) }}" class="w-48 h-48 object-cover rounded">
                 @else
                     <img src="{{ asset('images/no-image.jpg') }}" class="w-48 h-48 object-cover rounded">
                 @endif
@@ -39,31 +43,45 @@
             <!-- BOTONES -->
             <div class="mt-6 flex gap-4">
 
-                <a href="{{ route('publicaciones.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded">
+                <a href="{{ url()->previous() }}" class="px-4 py-2 bg-gray-500 text-white rounded">
                     Volver
                 </a>
 
                 @auth
                     @if($publicacion->usuario_id != auth()->id())
-                        <form method="POST" action="{{ route('solicitudes.store', $publicacion->id) }}">
-                            @csrf
-                            <button class="px-4 py-2 bg-green-600 text-white rounded">
-                                Solicitar intercambio
-                            </button>
-                        </form>
+
+                        @if(!$solicitudUsuario)
+                            <form method="POST" action="{{ route('solicitudes.store', $publicacion->id) }}">
+                                @csrf
+                                <button class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
+                                    Solicitar intercambio
+                                </button>
+                            </form>
+
+                        @elseif($solicitudUsuario->estado === 8)
+                            <span class="px-4 py-2 bg-yellow-400 text-white rounded">
+                                Solicitud pendiente
+                            </span>
+
+                        @elseif($solicitudUsuario->estado === 9)
+                            <span class="px-4 py-2 bg-green-500 text-white rounded">
+                                Intercambio ya aceptado
+                            </span>
+
+                        @elseif($solicitudUsuario->estado === 10)
+                            <form method="POST" action="{{ route('solicitudes.store', $publicacion->id) }}">
+                                @csrf
+                                <button class="inline-block px-4 py-2 bg-red-500 text-white rounded hover:opacity-90">
+                                    Volver a solicitar
+                                </button>
+                            </form>
+                        @endif
+
                     @endif
                 @endauth
 
             </div>
             <br>
-            <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="mb-4">
-                    <a href="{{ route('dashboard') }}"
-                        class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
-                        Volver
-                    </a>
-                </div>
-            </section>
         </div>
     </main>
 </x-app-layout>

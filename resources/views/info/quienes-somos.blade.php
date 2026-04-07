@@ -12,17 +12,15 @@
                     Quienes somos
                 </a>
 
-                <a href="{{ route('colaboradores') }}"
-                    class="block px-4 py-2 border rounded bg-orange-500 text-white hover:bg-orange-600">
+                <a href="{{ route('colaboradores') }}" class="block px-4 py-2 border rounded bg-orange-500 text-white hover:bg-orange-600">
                     Colaboradores
                 </a>
 
-                <a href="{{ route('compromisos') }}"
-                    class="block px-4 py-2 border rounded bg-orange-500 text-white hover:bg-orange-600">
+                <a href="{{ route('compromisos') }}" class="block px-4 py-2 border rounded bg-orange-500 text-white hover:bg-orange-600">
                     Compromisos
                 </a>
 
-                <a href="#" class="block px-4 py-2 border rounded bg-orange-500 text-white hover:bg-orange-600">
+                <a href="{{ route('publicaciones.index') }}" class="block px-4 py-2 border rounded bg-orange-500 text-white hover:bg-orange-600">
                     Buscador
                 </a>
 
