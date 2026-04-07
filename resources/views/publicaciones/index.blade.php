@@ -27,7 +27,7 @@
                     <form method="GET" action="{{ route('publicaciones.index') }}" class="flex gap-2">
 
                         <!-- Combo etapa  -->
-                        <select name="etapa_id" id="etapa"class="border p-2 rounded">
+                        <select name="etapa_id" id="etapa"class="border p-6 rounded">
                             <option value="">Todas las etapas</option>
                             @foreach ($etapas as $etapa)
                                 <option value="{{ $etapa->id }}" {{ request('etapa_id') == $etapa->id ? 'selected' : '' }}>
@@ -37,7 +37,7 @@
                         </select>
                         <!-- Combo curso  -->
 
-                        <select name="curso_id" id="curso" class="border p-2 rounded">
+                        <select name="curso_id" id="curso" class="border p-6 rounded">
                         <option value="">Todos los cursos</option>
                         @foreach ($cursos as $curso)
                         <option
@@ -50,10 +50,11 @@
                         </select>
 
                         <!-- Combo asignatura   -->
-                        <select name="asignatura_id" class="border p-2 rounded">
+                        <select name="asignatura_id" class="border p-4 rounded">
                             <option value="">Todas las asignaturas</option>
                             @foreach ($asignaturas as $asignatura)
-                                <option value="{{ $asignatura->id }}" {{ request('asignatura_id') == $asignatura->id ? 'selected' : '' }}>
+                                <option value="{{ $asignatura->id }}"
+                                data {{ request('asignatura_id') == $asignatura->id ? 'selected' : '' }}>
                                     {{ $asignatura->asignatura }}
                                 </option>
                             @endforeach
