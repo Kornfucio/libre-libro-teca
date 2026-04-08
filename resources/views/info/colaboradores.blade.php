@@ -33,7 +33,7 @@
 
                     Nuestros Colaboradores: El corazón de Libre-libro-teca
                 </h1>
-                <img src="{{ asset('build/images/logo.png') }}" alt="Logo" class="h-80 w-auto mx-auto block">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-80 w-auto mx-auto block">
                 <p class="text-gray-600 mt-4 leading-relaxed" style="text-align:center">
                     Desde <b>Libre-libro-teca</b> queremos dedicar este espacio para reconocer y agradecer profundamente
                     el esfuerzo de quienes hacen que esta iniciativa sea una realidad. Esta plataforma nació del deseo de

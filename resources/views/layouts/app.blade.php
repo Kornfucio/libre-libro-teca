@@ -21,8 +21,8 @@
 
             <!-- LOGO -->
             <a href="{{ route('home') }}" class="flex items-center space-x-3 hover:opacity-80 transition">
-                <img src="{{ asset('build/images/logo.png') }}" alt="Logo" class="h-28 w-auto">
-                <img src="{{ asset('build/images/texto.png') }}" alt="texto" class="h-20 w-auto">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-28 w-auto">
+                <img src="{{ asset('images/texto.png') }}" alt="texto" class="h-20 w-auto">
             </a>
 
             <!-- NAV -->
