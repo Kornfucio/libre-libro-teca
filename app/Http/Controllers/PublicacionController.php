@@ -7,6 +7,22 @@ use App\Models\Publicacion;
 use App\Models\CentroLibro;
 use Illuminate\Support\Facades\Auth;
 
+    /**
+     * CONTROLADOR DE PUBLICACIONES: GESTIONA LAS PUBLICACIONES DE LOS USUARIOS:
+     * - index(): Listado público de publicaciones con filtros por etapa, curso y asignatura
+     * - misPublicaciones(): Listado de las publicaciones del usuario autenticado
+     * - create(): Formulario de creación de publicación
+     * - store(): Guardar nueva publicación
+     * - show(): Mostrar detalle de una publicación
+     * - edit(): Formulario de edición de publicación (solo para el propietario)
+     * - update(): Actualizar publicación (solo para el propietario)
+     * - destroy(): Borrado lógico de publicación (solo para el propietario)
+     * - En el listado público, se excluyen las publicaciones que el usuario autenticado ya ha solicitado (en estado pendiente o aceptada)
+     * - En el detalle de la publicación, se muestra si el usuario autenticado ya ha solicitado esa publicación (si existe una solicitud pendiente o aceptada)
+     * - En el formulario de creación, se muestran los libros disponibles en el centro del usuario autenticado para seleccionar
+     * - En el formulario de edición, solo se permite editar la descripción (no el libro ni la imagen) para simplificar
+     */
+
 class PublicacionController extends Controller
 {
     /**

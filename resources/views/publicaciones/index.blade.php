@@ -122,18 +122,30 @@
 
                                                 <!-- USUARIO -->
                                                 <td class="px-4 py-2">
-                                                    {{ $publicacion->usuario->nombre ?? '-' }}
+                                                    @auth
+                                                        {{ $publicacion->usuario->nombre ?? '-' }}
+                                                    @endauth
+                                                    @guest
+                                                        Usuario anónimo
+                                                    @endguest
                                                 </td>
 
                                                 <!-- ACCIONES -->
                                                 <td class="px-4 py-2 space-x-2">
 
                                                     <!-- Ver -->
+                                                    <!--Si el usuario está autenticado, puede ver el detalle de la publicación. Si no, lo redirige al login-->
+                                                    @auth
                                                     <a href="{{ route('publicaciones.show', $publicacion->id) }}"
                                                         class="text-blue-600 hover:underline">
                                                         Ver
                                                     </a>
-
+                                                    @endauth
+                                                    @guest
+                                                    <a href="{{ route('login') }}"
+                                                        class="text-blue-600 hover:underline">Inicia sesión
+                                                    </a>
+                                                    @endguest
                                                     @auth
                                                         @if($publicacion->usuario_id === auth()->id())
 

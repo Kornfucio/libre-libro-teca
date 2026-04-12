@@ -10,7 +10,11 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::resource('publicaciones', PublicacionController::class);
+Route::resource('publicaciones', PublicacionController::class)->except(['show']); //Protegemos el show para controlar que acceden usuarios logeados
+
+Route::get('/publicaciones/{publicacion}', [PublicacionController::class, 'show']) //Aplicamos el middleware auth solo al show y redirigimos al login si no están autenticados
+    ->middleware('auth')
+    ->name('publicaciones.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

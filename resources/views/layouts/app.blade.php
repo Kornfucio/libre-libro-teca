@@ -16,72 +16,76 @@
 
 <body class="font-sans antialiased bg-[#F2F2F2] min-h-screen flex flex-col">
 
+    <!-- HEADER -->
     <header class="bg-[#41abee] text-white shadow">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="w-full px-4 py-4">
 
-            <!-- LOGO -->
-            <a href="{{ route('home') }}" class="flex items-center space-x-3 hover:opacity-80 transition">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-28 w-auto">
-                <img src="{{ asset('images/texto.png') }}" alt="texto" class="h-20 w-auto">
-            </a>
+            <div class="flex flex-row flex-wrap justify-between items-center gap-4">
 
-            <!-- NAV -->
-            <nav class="text-sm w-full flex justify-end">
+                <!-- LOGO -->
+                <a href="{{ route('home') }}" class="flex items-center gap-3 justify-center md:justify-start">
+                    <img src="{{ asset('images/logo.png') }}" class="h-16 md:h-20 lg:h-24 w-auto">
+                    <img src="{{ asset('images/texto.png') }}" class="h-10 md:h-14 lg:h-16 w-auto">
+                </a>
 
-                @guest
-                    <div class="text-right">
-                        <a href="{{ route('login') }}"
-                            class="px-20 py-3 text-lg font-bold bg-yellow-400 text-[#1E88C8] rounded-full hover:bg-yellow-500 transition-all shadow-md">
-                            Inicia sesión
-                        </a>
-                        <br><br>
-                        <h6>
-                            ¿Aún no eres usuario?
-                            <a href="{{ route('register') }}">
-                                <u style="color: red">Date de alta aquí</u>
+                <!-- NAV -->
+                <nav class="flex justify-center md:justify-end">
+
+                    @guest
+                        <div class="flex flex-col md:flex-row items-center gap-3 md:gap-6 text-center md:text-right">
+
+                            <a href="{{ route('login') }}"
+                                class="inline-block px-6 py-3 text-lg font-bold bg-yellow-400 text-[#1E88C8] rounded-full hover:bg-yellow-500 transition shadow-md">
+                                Inicia sesión
                             </a>
-                        </h6>
-                    </div>
-                @endguest
 
-                @auth
-                    <div class="flex items-center gap-6">
-
-                        <!-- MENÚ -->
-                        <div class="flex gap-6">
-                            <a href="{{ route('dashboard') }}" class="hover:underline">Dashboard</a>
-                            <a href="{{ route('publicaciones.index') }}" class="hover:underline">Libros</a>
-                            <a href="{{ route('solicitudes.index') }}" class="hover:underline">Solicitudes</a>
-                        </div>
-
-                        <!-- USUARIO -->
-                        <div class="flex items-center gap-4">
-
-                            <span class="font-semibold">
-                                👤 {{ Auth::user()->nombre }}
+                            <span class="text-sm">
+                                ¿Aún no eres usuario?
+                                <a href="{{ route('register') }}" class="underline text-red-500">
+                                    Date de alta aquí
+                                </a>
                             </span>
 
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button class="underline hover:opacity-80">
-                                    Salir
-                                </button>
-                            </form>
+                        </div>
+                    @endguest
+
+                    @auth
+                        <div class="flex flex-col md:flex-row items-center gap-4">
+
+                            <div class="flex gap-4">
+                                <a href="{{ route('dashboard') }}" class="hover:underline">Dashboard</a>
+                                <a href="{{ route('publicaciones.index') }}" class="hover:underline">Libros</a>
+                                <a href="{{ route('solicitudes.index') }}" class="hover:underline">Solicitudes</a>
+                            </div>
+
+                            <div class="flex items-center gap-3">
+                                <span class="font-semibold">
+                                    👤 {{ Auth::user()->nombre }}
+                                </span>
+
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button class="underline hover:opacity-80">
+                                        Salir
+                                    </button>
+                                </form>
+                            </div>
 
                         </div>
+                    @endauth
 
-                    </div>
-                @endauth
+                </nav>
 
-            </nav>
+            </div>
 
         </div>
     </header>
 
-    <main class="flex-grow py-6">
+    <!-- MAIN -->
+    <main class="flex-grow py-6 w-full">
 
-        <div class="max-w-7xl mx-auto px-6 mb-4">
-
+        <!-- ALERTAS -->
+        <div class="px-4 mb-4">
             @if(session('success'))
                 <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-2 rounded mb-2">
                     {{ session('success') }}
@@ -93,25 +97,29 @@
                     {{ session('error') }}
                 </div>
             @endif
-
         </div>
 
+        <!-- CONTENIDO -->
         {{ $slot }}
 
     </main>
 
+    <!-- FOOTER -->
     <footer class="bg-gray-100 text-orange-500 mt-auto">
-        <div class="max-w-7xl mx-auto px-6 py-4 text-sm text-center">
-            <a href="{{ route('contacto') }}" class="hover:underline">Contacto</a> ·
-            <a href="{{ route('ayuda') }}" class="hover:underline">Ayuda</a> ·
-            <a href="{{ route('aviso-legal') }}" class="hover:underline">Aviso Legal</a>
+        <div class="w-full px-4 py-4 text-sm text-center">
 
-            <br><br>
+            <div class="flex flex-row flex-wrap justify-center gap-4">
+                <a href="{{ route('contacto') }}" class="hover:underline">Contacto</a>
+                <a href="{{ route('ayuda') }}" class="hover:underline">Ayuda</a>
+                <a href="{{ route('aviso-legal') }}" class="hover:underline">Aviso Legal</a>
+            </div>
 
-            © {{ date('Y') }} Libre-Libro-Teca · Proyecto DAW · Sergio González Perancho
+            <div class="mt-3">
+                © {{ date('Y') }} Libre-Libro-Teca · Proyecto DAW · Sergio González Perancho
+            </div>
+
         </div>
     </footer>
 
 </body>
-
 </html>

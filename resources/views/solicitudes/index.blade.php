@@ -1,36 +1,21 @@
 <x-app-layout>
     <x-slot name="header">
-        <header>
-            <h1 class="font-semibold text-xl text-gray-800 leading-tight">
-                Solicitudes
-            </h1>
-        </header>
+        <h1 class="font-semibold text-xl text-gray-800 leading-tight">
+            Solicitudes
+        </h1>
     </x-slot>
 
     <main class="py-6">
         <section class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
-            <!-- MENSAJES -->
-            @if(session('success'))
-                <div class="bg-green-100 text-green-800 px-4 py-2 rounded">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="bg-red-100 text-red-800 px-4 py-2 rounded">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            <!-- RESUMEN -->
+            <!-- Resumen de solicitudes aceptadas -->
             @if($aceptadasCount > 0)
-                <div class="bg-green-100 text-green-800 px-4 py-2 rounded">
+                <div class="bg-green-100 text-green-800 px-4 py-2 rounded text-center">
                     Tienes {{ $aceptadasCount }} solicitudes aceptadas
                 </div>
             @endif
 
-            <!-- SOLICITUDES ENVIADAS -->
+            <!-- Bloque de solicitudes enviadas por el usuario -->
             <article class="bg-white shadow rounded-lg overflow-hidden">
 
                 <header class="bg-gray-100 px-4 py-2 flex justify-between items-center">
@@ -43,7 +28,7 @@
                     @endif
                 </header>
 
-                <!-- PESTAÑAS -->
+                <!-- Pestañas para separar solicitudes enviadas por estado -->
                 <div class="flex gap-4 px-4 pt-4 border-b">
                     <button onclick="mostrarTab('pendientes')" class="tab-btn">
                         Pendientes ({{ $pendientes->count() }})
@@ -56,52 +41,60 @@
                     </button>
                 </div>
 
-                <!-- PENDIENTES -->
+                <!-- Contenido de solicitudes pendientes -->
                 <div id="pendientes" class="tab-content p-4">
                     @forelse($pendientes as $solicitud)
-                        <div class="border-b py-2 p-2 mb-2 rounded flex justify-between items-center">
+                        <div class="border-b py-2 flex justify-between items-center">
 
-                            <div class="flex items-center gap-2">
+                            <div>
                                 <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
-                                <span class="text-yellow-600">Pendiente</span>
+                                <span class="text-yellow-600 font-semibold ml-2">Pendiente</span>
                             </div>
 
-                            <a href="{{ route('publicaciones.show', $solicitud->publicacion->id) }}"
-                                class="text-blue-600 hover:underline">
+                            <a href="{{ route('publicaciones.show', $solicitud->publicacion) }}"
+                               class="text-blue-600 hover:underline">
                                 Ver detalles
                             </a>
 
                         </div>
-
                     @empty
                         <p class="text-gray-500">No hay solicitudes pendientes</p>
                     @endforelse
                 </div>
 
-                <!-- ACEPTADAS -->
+                <!-- Contenido de solicitudes aceptadas -->
                 <div id="aceptadas" class="tab-content p-4 hidden">
                     @forelse($aceptadas as $solicitud)
-                        <div class="bg-green-50 p-2 mb-2 rounded flex justify-between items-center">
-                            <span>
-                                <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
-                            </span>
+                        <div class="bg-green-50 p-2 mb-2 rounded flex justify-between">
 
-                            <a href="{{ route('publicaciones.show', $solicitud->publicacion->id) }}"
-                                class="text-blue-600 hover:underline">
+                            <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
+
+                            <a href="{{ route('publicaciones.show', $solicitud->publicacion) }}"
+                               class="text-blue-600 hover:underline">
                                 Ver detalles
                             </a>
+
                         </div>
                     @empty
                         <p class="text-gray-500">No hay solicitudes aceptadas</p>
                     @endforelse
                 </div>
 
-                <!-- RECHAZADAS -->
+                <!-- Contenido de solicitudes rechazadas -->
                 <div id="rechazadas" class="tab-content p-4 hidden">
                     @forelse($rechazadas as $solicitud)
-                        <div class="bg-red-50 p-2 mb-2 rounded">
-                            <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
-                            <span class="text-red-600 ml-2">Rechazada</span>
+                        <div class="bg-red-50 p-2 mb-2 rounded flex justify-between">
+
+                            <div>
+                                <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
+                                <span class="text-red-600 ml-2 font-semibold">Rechazada</span>
+                            </div>
+
+                            <a href="{{ route('publicaciones.show', $solicitud->publicacion) }}"
+                               class="text-blue-600 hover:underline">
+                                Ver detalles
+                            </a>
+
                         </div>
                     @empty
                         <p class="text-gray-500">No hay solicitudes rechazadas</p>
@@ -110,97 +103,133 @@
 
             </article>
 
-            <!-- SOLICITUDES RECIBIDAS -->
+            <!-- Bloque de solicitudes recibidas -->
             <article class="bg-white shadow rounded-lg overflow-hidden">
+
                 <header class="bg-gray-100 px-4 py-2">
                     <h2 class="font-semibold text-lg">Solicitudes recibidas</h2>
                 </header>
 
-                <table class="min-w-full border border-gray-200">
-                    <thead>
-                        <tr>
-                            <th class="px-4 py-2 text-left">Libro</th>
-                            <th class="px-4 py-2 text-left">Solicitante</th>
-                            <th class="px-4 py-2 text-left">Estado</th>
-                            <th class="px-4 py-2 text-left">Acciones</th>
-                        </tr>
-                    </thead>
+                <!-- Pestañas para separar pendientes e histórico -->
+                <div class="flex gap-4 px-4 pt-4 border-b">
+                    <button onclick="mostrarTabRecibidas('rec-pendientes')" class="tab-btn">
+                        Pendientes ({{ $recibidas->total() }})
+                    </button>
+                    <button onclick="mostrarTabRecibidas('rec-historico')" class="tab-btn">
+                        Histórico ({{ $recibidasHistorico->total() }})
+                    </button>
+                </div>
 
-                    <tbody>
-                        @forelse ($recibidas as $solicitud)
-                            @php
-                                $estado = strtolower($solicitud->estado->nombre ?? 'pendiente');
-                            @endphp
+                <!-- Solicitudes recibidas pendientes -->
+                <div id="rec-pendientes" class="tab-content-rec p-4">
 
-                            <tr class="border-t hover:bg-gray-50">
+                    @forelse ($recibidas as $solicitud)
 
-                                <td class="px-4 py-2">
-                                    {{ $solicitud->publicacion->centroLibro->libro->titulo ?? '-' }}
-                                </td>
+                        <div class="border-b py-3 flex justify-between items-center">
 
-                                <td class="px-4 py-2">
-                                    {{ $solicitud->usuario->nombre ?? '-' }}
-                                </td>
+                            <div>
+                                <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
 
-                                <td class="px-4 py-2">
-                                    {{ ucfirst($estado) }}
-                                </td>
+                                <div class="text-sm text-gray-600">
+                                    {{ $solicitud->usuario->nombre }}
+                                </div>
+                            </div>
 
-                                <td class="px-4 py-2 space-x-2">
+                            <!-- Acciones disponibles solo para pendientes -->
+                            <div class="flex gap-4">
 
-                                    @if($estado == 'pendiente')
+                                <form method="POST" action="{{ route('solicitudes.aceptar', $solicitud->id) }}">
+                                    @csrf
+                                    <button class="text-green-600 hover:underline font-semibold">
+                                        Aceptar
+                                    </button>
+                                </form>
 
-                                        <form method="POST" action="{{ route('solicitudes.aceptar', $solicitud->id) }}"
-                                            class="inline">
-                                            @csrf
-                                            <button class="text-green-600 hover:underline">
-                                                Aceptar
-                                            </button>
-                                        </form>
+                                <form method="POST" action="{{ route('solicitudes.rechazar', $solicitud->id) }}">
+                                    @csrf
+                                    <button class="text-red-600 hover:underline font-semibold">
+                                        Rechazar
+                                    </button>
+                                </form>
 
-                                        <form method="POST" action="{{ route('solicitudes.rechazar', $solicitud->id) }}"
-                                            class="inline">
-                                            @csrf
-                                            <button class="text-red-600 hover:underline">
-                                                Rechazar
-                                            </button>
-                                        </form>
+                            </div>
 
-                                    @else
-                                        <span class="text-gray-500">Sin acciones</span>
-                                    @endif
+                        </div>
 
-                                </td>
-                            </tr>
+                    @empty
+                        <p class="text-gray-500">No tienes solicitudes pendientes</p>
+                    @endforelse
 
-                        @empty
-                            <tr>
-                                <td colspan="4" class="px-4 py-4 text-center text-gray-500">
-                                    No tienes solicitudes recibidas
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                    <!-- Navegación de páginas -->
+                    <div class="mt-4">
+                        {{ $recibidas->links() }}
+                    </div>
+
+                </div>
+
+                <!-- Histórico de solicitudes recibidas -->
+                <div id="rec-historico" class="tab-content-rec p-4 hidden">
+
+                    @forelse ($recibidasHistorico as $solicitud)
+
+                        <div class="border-b py-3 flex justify-between items-center">
+
+                            <div>
+                                <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
+
+                                <div class="text-sm text-gray-600">
+                                    {{ $solicitud->usuario->nombre }}
+                                </div>
+                            </div>
+
+                            <!-- Solo se muestra el estado, sin acciones -->
+                            <div>
+                                @if($solicitud->estado_id == 9)
+                                    <span class="text-green-600 font-semibold">Aceptada</span>
+                                @else
+                                    <span class="text-red-600 font-semibold">Rechazada</span>
+                                @endif
+                            </div>
+
+                        </div>
+
+                    @empty
+                        <p class="text-gray-500">No hay histórico</p>
+                    @endforelse
+
+                    <!-- Navegación de páginas -->
+                    <div class="mt-4">
+                        {{ $recibidasHistorico->links() }}
+                    </div>
+
+                </div>
+
             </article>
 
         </section>
 
         <br>
 
+        <!-- Botón de vuelta al dashboard -->
         <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-4">
                 <a href="{{ route('dashboard') }}"
-                    class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
+                   class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
                     Volver
                 </a>
             </div>
         </section>
     </main>
 
-    <script> <!-- Script para manejar las pestañas con los distintos estados de las solicitudes -->
+    <!-- Script para cambiar entre pestañas -->
+    <script>
         function mostrarTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tab).classList.remove('hidden');
+        }
+
+        function mostrarTabRecibidas(tab) {
+            document.querySelectorAll('.tab-content-rec').forEach(el => el.classList.add('hidden'));
             document.getElementById(tab).classList.remove('hidden');
         }
     </script>

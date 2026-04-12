@@ -9,6 +9,18 @@ use Illuminate\Http\Request;
 class SolicitudIntercambioController extends Controller
 {
     /**
+     * ESTE CONTROLOR GESTIONA LAS SOLICITUDES DE INTERCAMBIO:
+     * - index(): Muestra las solicitudes enviadas y recibidas
+     * - store(): Crea una nueva solicitud
+     * - aceptar(): Acepta una solicitud recibida
+     * - rechazar(): Rechaza una solicitud recibida
+     * - Solo el propietario de la publicación puede aceptar o rechazar solicitudes
+     * - Las solicitudes enviadas se muestran en pestañas: Pendientes, Aceptadas, Rechazadas
+     * - Las solicitudes recibidas SOLO se muestran las pendientes (para acción inmediata)
+     */
+
+
+    /**
      * Mostrar solicitudes (enviadas y recibidas)
      */
     public function index()
@@ -18,13 +30,20 @@ class SolicitudIntercambioController extends Controller
             ->with(['publicacion.centroLibro.libro', 'publicacion.usuario', 'estado'])
             ->get();
 
-        // Solicitudes que YO he recibido (SOLO PENDIENTES)
+       // Solicitudes recibidas pendientes (paginadas)
         $recibidas = SolicitudIntercambio::whereHas('publicacion', function ($query) {
                 $query->where('usuario_id', auth()->id());
             })
             ->where('estado_id', 8)
             ->with(['publicacion.centroLibro.libro', 'usuario', 'estado'])
-            ->get();
+            ->paginate(10, ['*'], 'pendientes_page');
+        // Histórico de solicitudes recibidas (paginado)
+        $recibidasHistorico = SolicitudIntercambio::whereHas('publicacion', function ($query) {
+                $query->where('usuario_id', auth()->id());
+            })
+            ->whereIn('estado_id', [9,10])
+            ->with(['publicacion.centroLibro.libro', 'usuario', 'estado'])
+            ->paginate(20, ['*'], 'historico_page');
 
         // Indicadores
         $aceptadasCount = $enviadas->where('estado_id', 9)->count();
@@ -37,12 +56,13 @@ class SolicitudIntercambioController extends Controller
         return view('solicitudes.index', compact(
             'enviadas',
             'recibidas',
+            'recibidasHistorico',
             'aceptadasCount',
             'pendientes',
             'aceptadas',
             'rechazadas'
         ));
-    }
+        }
 
     /**
      * Crear una solicitud
@@ -76,6 +96,11 @@ class SolicitudIntercambioController extends Controller
         $solicitud->estado_id = 9;
         $solicitud->save();
 
+        // CAMBIAR ESTADO DE LA PUBLICACIÓN
+        $publicacion = $solicitud->publicacion;
+        $publicacion->estado_id = 5; // Solicitud que pasa a aceptada, la publicación pasa a despublicado para que se comprometa el intercambio y no pueda solicitarla nadie más
+        $publicacion->save();
+
         SolicitudIntercambio::where('publicacion_id', $solicitud->publicacion_id)
             ->where('id', '!=', $solicitud->id)
             ->update(['estado_id' => 10]);
@@ -97,6 +122,6 @@ class SolicitudIntercambioController extends Controller
         $solicitud->estado_id = 10;
         $solicitud->save();
 
-        return back()->with('success', 'Solicitud rechazada');
+        return back()->with('error', 'Solicitud rechazada');
     }
 }
