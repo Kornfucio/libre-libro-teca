@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\SolicitudIntercambio;
 use App\Models\Publicacion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SolicitudAceptada;
+use App\Mail\SolicitudRechazada;
 
 class SolicitudIntercambioController extends Controller
 {
@@ -105,6 +108,9 @@ class SolicitudIntercambioController extends Controller
             ->where('id', '!=', $solicitud->id)
             ->update(['estado_id' => 10]);
 
+        Mail::to($solicitud->usuario->email) //Mensajería para informar al solicitante de que su solicitud ha sido aceptada
+         ->send(new SolicitudAceptada());
+
         return back()->with('success', 'Solicitud aceptada');
     }
 
@@ -122,6 +128,27 @@ class SolicitudIntercambioController extends Controller
         $solicitud->estado_id = 10;
         $solicitud->save();
 
+        Mail::to($solicitud->usuario->email) //Mensajería para informar al solicitante de que su solicitud ha sido rechazada
+         ->send(new SolicitudRechazada());
+
         return back()->with('error', 'Solicitud rechazada');
+    }
+
+    public function cancelar($id) //Método para que el solicitante pueda cancelar una solicitud pendiente
+    {
+        $solicitud = SolicitudIntercambio::findOrFail($id);
+
+        //Solo el usuario que envió la solicitud puede cancelarla
+        if ($solicitud->usuario_id !== auth()->id()) {
+            abort(403);
+        }
+        if ($solicitud->estado_id != 8) { //Solo se pueden cancelar las solicitudes pendientes
+            return back()->with('error', 'Solo puedes cancelar solicitudes pendientes');
+        }
+
+        $solicitud->estado_id = 13; // Estado de solicitud cancelada
+        $solicitud->save();
+
+        return back()->with('success', 'Solicitud cancelada');
     }
 }

@@ -27,6 +27,7 @@
                             <th class="px-4 py-2 text-left">Autor</th>
                             <th class="px-4 py-2 text-left">Asignatura</th>
                             <th class="px-4 py-2 text-left">Curso</th>
+                            <th class="px-4 py-2 text-left">Estado</th>
                             <th class="px-4 py-2 text-left">Acciones</th>
                         </tr>
                     </thead>
@@ -51,6 +52,21 @@
                                     {{ $publicacion->centroLibro->libro->curso->numero ?? '-' }}
                                 </td>
 
+                                <td class="px-4 py-2">
+                                    @if($publicacion->estado_id == 3)
+                                        <span class="text-green-600 font-semibold">Publicada</span>
+                                    @elseif($publicacion->estado_id == 12)
+                                        <span class="text-red-600 font-semibold">Eliminada</span>
+                                    @elseif($publicacion->estado_id == 4)
+                                        <span class="text-gray-600 font-semibold">Intercambiada</span>
+                                    @elseif($publicacion->estado_id == 8)
+                                        <span class="text-orange-600 font-semibold">Pendiente</span>
+                                    @elseif($publicacion->estado_id == 9)
+                                        <span class="text-green-600 font-semibold">Aceptada</span>
+                                    @elseif($publicacion->estado_id == 3)
+                                        <span class="text-yellow-600 font-semibold">Despublicado</span>
+                                    @endif
+                                </td>
                                 <td class="px-4 py-2 space-x-2">
 
                                     <!-- VER -->

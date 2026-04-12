@@ -114,7 +114,7 @@
         </section>
     </main>
 
-    <!-- SCRIPT PREVIEW + CHECK -->
+    <!-- SCRIPT PREVIEW DE LA IMAGEN + CHECK DE ACEPTACIÓN DE CONDICIONES -->
     <script>
         // Preview imagen
         document.getElementById('imagenInput').addEventListener('change', function (event) {

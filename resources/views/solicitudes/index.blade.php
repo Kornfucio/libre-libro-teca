@@ -46,15 +46,31 @@
                     @forelse($pendientes as $solicitud)
                         <div class="border-b py-2 flex justify-between items-center">
 
+                            <!-- Información básica de la solicitud -->
                             <div>
                                 <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
                                 <span class="text-yellow-600 font-semibold ml-2">Pendiente</span>
                             </div>
 
-                            <a href="{{ route('publicaciones.show', $solicitud->publicacion) }}"
-                               class="text-blue-600 hover:underline">
-                                Ver detalles
-                            </a>
+                            <!-- Acciones disponibles para solicitudes pendientes -->
+                            <div class="flex items-center gap-4">
+
+                                <!-- Ver detalle de la publicación -->
+                                <a href="{{ route('publicaciones.show', $solicitud->publicacion) }}"
+                                   class="text-blue-600 hover:underline">
+                                    Ver detalles
+                                </a>
+
+                                <!-- Opción para cancelar la solicitud -->
+                                <form method="POST" action="{{ route('solicitudes.cancelar', $solicitud->id) }}">
+                                    @csrf
+                                    <button class="text-red-600 hover:underline"
+                                        onclick="return confirm('¿Seguro que quieres cancelar la solicitud?')">
+                                        Cancelar
+                                    </button>
+                                </form>
+
+                            </div>
 
                         </div>
                     @empty
@@ -69,6 +85,7 @@
 
                             <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
 
+                            <!-- Solo se permite ver el detalle, ya no hay acciones -->
                             <a href="{{ route('publicaciones.show', $solicitud->publicacion) }}"
                                class="text-blue-600 hover:underline">
                                 Ver detalles
@@ -90,6 +107,7 @@
                                 <span class="text-red-600 ml-2 font-semibold">Rechazada</span>
                             </div>
 
+                            <!-- Solo permite consultar el detalle -->
                             <a href="{{ route('publicaciones.show', $solicitud->publicacion) }}"
                                class="text-blue-600 hover:underline">
                                 Ver detalles
@@ -127,6 +145,7 @@
 
                         <div class="border-b py-3 flex justify-between items-center">
 
+                            <!-- Información del solicitante -->
                             <div>
                                 <strong>{{ $solicitud->publicacion->centroLibro->libro->titulo }}</strong>
 
@@ -182,7 +201,7 @@
                                 </div>
                             </div>
 
-                            <!-- Solo se muestra el estado, sin acciones -->
+                            <!-- Mostrar estado final de la solicitud -->
                             <div>
                                 @if($solicitud->estado_id == 9)
                                     <span class="text-green-600 font-semibold">Aceptada</span>
@@ -221,7 +240,7 @@
         </section>
     </main>
 
-    <!-- Script para cambiar entre pestañas -->
+    <!-- Script para manejar las pestañas -->
     <script>
         function mostrarTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));

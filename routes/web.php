@@ -58,4 +58,8 @@ Route::view('/aviso-legal', 'info.aviso-legal')->name('aviso-legal');
 Route::view('/contacto', 'info.contacto')->name('contacto');
 Route::view('/ayuda', 'info.ayuda')->name('ayuda');
 
+Route::post('/solicitudes/{id}/cancelar', [SolicitudIntercambioController::class, 'cancelar'])
+    ->name('solicitudes.cancelar')
+    ->middleware('auth');
+
 require __DIR__.'/auth.php';
