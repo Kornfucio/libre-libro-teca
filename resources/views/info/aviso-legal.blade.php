@@ -29,7 +29,7 @@
 
                 <h1 class="text-2xl font-semibold text-[#1E88C8] mb-4" style="text-align:center">
 
-                    Aviso legal <img src="{{ asset('build/images/logo.png') }}" alt="Logo" class="h-40 w-auto mx-auto block">
+                    Aviso legal <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-40 w-auto mx-auto block">
                 </h1>
 
                 <p class="text-gray-600 mt-4 leading-relaxed" style="text-justify: distribute">
