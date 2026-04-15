@@ -4,6 +4,11 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PublicacionController;
 use App\Http\Controllers\SolicitudIntercambioController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\PublicacionController as AdminPublicacionController; //Importación del controlador de publicaciones para la sección de administración con un alias para evitar conflictos con el controlador de publicaciones general
+use App\Http\Controllers\Admin\SolicitudController;
+use App\Http\Controllers\Admin\CentroController;
+use App\Http\Controllers\Admin\LibroController;
 
 
 Route::get('/dashboard', function () {
@@ -16,10 +21,26 @@ Route::get('/publicaciones/{publicacion}', [PublicacionController::class, 'show'
     ->middleware('auth')
     ->name('publicaciones.show');
 
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+//Rutas protegidas por el middleware isadmin para que solo los usuarios con rol de administrador puedan acceder a estas secciones de administración
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+    Route::get('/publicaciones', [AdminPublicacionController::class, 'index'])->name('publicaciones.index');
+
+    Route::get('/solicitudes', [SolicitudController::class, 'index'])->name('solicitudes.index');
+
+    Route::get('/centros', [CentroController::class, 'index'])->name('centros.index');
+
+    Route::get('/libros', [LibroController::class, 'index'])->name('libros.index');
+
 });
 
 Route::post('/publicaciones/{publicacion}/solicitar', [SolicitudIntercambioController::class, 'store'])

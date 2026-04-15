@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\IsAdmin; //Importación del middleware personalizado para verificar el rol de administrador
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -11,8 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        //Ubicación del middleware personalizado para verificar el rol de administrador
+        $middleware->alias(['Isadmin'=> IsAdmin::class,]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
+
+

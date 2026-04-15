@@ -42,6 +42,13 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+
+    //Este método verifica si el usuario tiene el rol de administrador
+    public function isAdmin(): bool
+    {
+    return $this->rol === 'admin';
+    }
+
     /**
      * Get the attributes that should be cast.
      *
