@@ -125,7 +125,7 @@ class SolicitudIntercambioController extends Controller
             abort(403);
         }
 
-        $solicitud->estado_id = 10;
+        $solicitud->estado_id = 10; //Estado de la solicitud pasa a rechazada
         $solicitud->save();
 
         Mail::to($solicitud->usuario->email) //Mensajería para informar al solicitante de que su solicitud ha sido rechazada

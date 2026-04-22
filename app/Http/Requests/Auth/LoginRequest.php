@@ -42,6 +42,19 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
+        // Antes de intentar autenticar, compruebo el estado del usuario
+        // Busco el usuario por email antes de intentar autenticarlo
+        $user = \App\Models\User::where('email', $this->input('email'))->first();
+
+        // Compruebo el estado del usuario
+        // Si tiene alguno de los estados, 4 = bloqueado y 12 = eliminado
+        // No permito el acceso
+        if ($user && in_array($user->estado_id, [4, 12])) {
+            throw ValidationException::withMessages([
+                'email' => 'Este usuario está bloqueado o no puede acceder. Contacte con el administrador.',
+            ]);
+        }
+
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 

@@ -23,10 +23,9 @@
                 </p>
             </div>
 
-            {{-- ===================== --}}
-            {{-- PANEL USUARIO NORMAL --}}
-            {{-- ===================== --}}
-            {{-- Si el usuario NO es admin, ve sus opciones habituales --}}
+
+            {{-- Panel usuario--}}
+            {{-- Usuario no admin --}}
             @unless(auth()->user()->isAdmin())
 
                 <div>
@@ -88,10 +87,8 @@
 
             @endunless
 
+            {{-- Panel Administrador --}}
 
-            {{-- ===================== --}}
-            {{-- PANEL ADMINISTRADOR --}}
-            {{-- ===================== --}}
             {{-- Si el usuario es admin, se muestra contenido global de gestión --}}
             @if(auth()->user()->isAdmin())
 

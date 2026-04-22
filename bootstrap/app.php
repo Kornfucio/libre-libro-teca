@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         //Ubicación del middleware personalizado para verificar el rol de administrador
-        $middleware->alias(['Isadmin'=> IsAdmin::class,]);
+        $middleware->alias(['isadmin'=> IsAdmin::class,]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
