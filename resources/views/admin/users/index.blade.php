@@ -3,11 +3,11 @@
         <main class="py-6">
 
             <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
+                <h1 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Usuarios registrados
+                </h1>
                 <article class="bg-white shadow rounded-lg overflow-hidden">
-                    <h1 class="font-semibold text-xl text-gray-800 leading-tight">
-                        Usuarios registrados
-                    </h1>
+
                     <!-- Filtros por rol, estado y centro -->
                     <div class="p-4 border-b bg-gray-50">
                         <form method="GET" action="{{ route('admin.users.index') }}" class="flex gap-2">
@@ -145,12 +145,12 @@
                         </tbody>
                     </table>
                 </article>
+                <div class="mt-4">
+                    {{ $usuarios->links() }}
+                </div>
             </section>
             <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <a href="{{ route('dashboard') }}"
-                    class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
-                    Volver
-                </a>
+                <x-boton-volver />
             </section>
 
         </main>

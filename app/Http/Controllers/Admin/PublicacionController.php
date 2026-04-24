@@ -11,14 +11,27 @@ use App\Models\Estado;
 
 class PublicacionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Cojo todas las publicaciones con sus relaciones (usuario y estado)
-        $publicaciones = Publicacion::with(['usuario', 'estado'])->paginate(10);
+        $query = Publicacion::with(['usuario', 'estado']);
 
-        // También necesito usuarios y estados por si los uso en filtros o vistas
+        // También obtengo usuarios y estados para poder filtrar desde la vista
         $usuarios = User::all();
-        $estados = Estado::whereIn('id',[3,5,6,7])->get(); // solo los estados relevantes para admin, no se muestran los eliminados
+        $estados = Estado::whereIn('id',[3,5,6,7,12])->get(); // solo los estados relevantes para admin, no se muestran los eliminados
+
+        //Si quiero filtrar por usuario o estado, lo hago aquí con con $request->input('usuario') o $request->input('estado') y añadiendo condiciones a la query de publicaciones
+        if ($request->filled('usuario')) {
+            $query->where('usuario_id', $request->usuario);
+        }
+        if ($request->filled('estado')) {
+            $query->where('estado_id', $request->input('estado'));
+        }
+        //Ordenación por fecha
+        $query->latest();
+
+        // Paginación con los filtros aplicados
+        $publicaciones= $query->paginate(10)->withQueryString(); // mantengo los filtros en la paginación
 
         // Devuelvo la vista con los datos
         return view('admin.publicaciones.index', compact('publicaciones', 'usuarios', 'estados'));

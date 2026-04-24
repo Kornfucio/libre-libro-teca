@@ -27,7 +27,9 @@ class UserController extends Controller
             $query->where('estado_id', $request->estado_id);
         }
 
-        $usuarios = $query->with(['centro', 'estado'])->get();
+        $usuarios = $query->with(['centro', 'estado'])
+            ->paginate(10)
+            ->withQueryString();
 
         //Para los seclects de filtro, necesito la lista completa de centros y estados para mostrar las opciones
         $centros=CentroEducativo::all();

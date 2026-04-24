@@ -195,14 +195,15 @@
                                             <!-- Si no ha solicitado -->
                                             @if(!$solicitudUsuario)
 
-                                                <form method="POST"
-                                                    action="{{ route('solicitudes.store', $publicacion->id) }}"
-                                                    class="inline">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="text-green-600 hover:underline">
-                                                        Solicitar
-                                                    </button>
+                                                <form method="POST" action="{{ route('solicitudes.store', $publicacion->id) }}"
+                                                class="inline">
+
+                                                @csrf
+
+                                                <button type="submit"
+                                                    class="text-green-600 hover:underline">
+                                                    Solicitar
+                                                 </button>
                                                 </form>
 
                                             <!-- Estados de la solicitud -->
@@ -253,10 +254,7 @@
         <!-- Botón de vuelta según el tipo de usuario -->
         <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @auth
-                <a href="{{ route('dashboard') }}"
-                    class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
-                    Volver
-                </a>
+                <x-boton-volver />
             @else
                 <a href="{{ route('home') }}"
                     class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">

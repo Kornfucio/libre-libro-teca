@@ -28,19 +28,34 @@ Rutas normales cuando el usuario está logueado
 */
 Route::middleware(['auth'])->group(function () {
 
-    // Publicaciones del usuario
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    // PUBLICACIONES
+    Route::get('/publicaciones', [PublicacionController::class, 'index'])
+        ->name('publicaciones.index');
+
+    Route::get('/mis-publicaciones', [PublicacionController::class, 'misPublicaciones'])
+        ->name('publicaciones.mias');
+
     Route::resource('publicaciones', PublicacionController::class);
 
-    // Solicitudes
-    Route::get('/solicitudes', [SolicitudIntercambioController::class, 'index'])
-        ->name('solicitudes.index');
+    // SOLICITUDES
+    Route::resource('solicitudes', SolicitudIntercambioController::class)
+    ->except(['store']);
 
-    Route::post('/solicitudes', [SolicitudIntercambioController::class, 'store'])
-        ->name('solicitudes.store');
 
-    Route::patch('/solicitudes/{id}/cancelar', [SolicitudIntercambioController::class, 'cancelar'])
+    Route::post('/solicitudes/{publicacion}', [SolicitudIntercambioController::class, 'store'])
+    ->name('solicitudes.store');
+
+    Route::patch('/solicitudes/{solicitud}/aceptar', [SolicitudIntercambioController::class, 'aceptar'])
+        ->name('solicitudes.aceptar');
+
+    Route::patch('/solicitudes/{solicitud}/cancelar', [SolicitudIntercambioController::class, 'cancelar'])
         ->name('solicitudes.cancelar');
 });
+
 
 
 /*
@@ -87,8 +102,8 @@ Route::middleware(['auth', 'isadmin'])
         ->name('solicitudes.finalizar');
 
     // Centros
-    Route::get('/centros', [CentroController::class, 'index'])
-        ->name('centros.index');
+    Route::resource('centros', CentroController::class)
+        ->except(['show', 'destroy']);
 
     // Libros
     Route::get('/libros', [LibroController::class, 'index'])
@@ -117,6 +132,12 @@ Route::middleware(['auth', 'isadmin'])
     Route::get('/', function () {
         return view('welcome');
     })->name('home');
+
+//Home del usuario validado
+
+    Route::middleware(['auth'])->get('/dashboard', function () {
+    return view('dashboard');
+    })->name('dashboard');
 
 
     require __DIR__.'/auth.php';
