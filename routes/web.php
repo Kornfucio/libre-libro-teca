@@ -62,13 +62,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/solicitudes/{publicacion}', [SolicitudIntercambioController::class, 'store'])
     ->name('solicitudes.store');
 
-    Route::patch('/solicitudes/{solicitud}/aceptar', [SolicitudIntercambioController::class, 'aceptar'])
+    Route::post('/solicitudes/{solicitud}/aceptar', [SolicitudIntercambioController::class, 'aceptar'])
         ->name('solicitudes.aceptar');
 
-    Route::patch('/solicitudes/{solicitud}/rechazar', [SolicitudIntercambioController::class, 'rechazar'])
+    Route::post('/solicitudes/{solicitud}/rechazar', [SolicitudIntercambioController::class, 'rechazar'])
     ->name('solicitudes.rechazar');
 
-    Route::patch('/solicitudes/{solicitud}/cancelar', [SolicitudIntercambioController::class, 'cancelar'])
+    Route::post('/solicitudes/{solicitud}/cancelar', [SolicitudIntercambioController::class, 'cancelar'])
         ->name('solicitudes.cancelar');
 });
 
