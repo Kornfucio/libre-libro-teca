@@ -45,7 +45,7 @@ class PublicacionController extends Controller
         $publicacion = Publicacion::findOrFail($id);
 
         // Cargo estados por si quiero cambiar el estado desde admin
-        $estados = Estado::all();
+        $estados = Estado::whereIn('id',[3,5,6,7,12])->get(); // solo los estados relevantes para publicaciones
 
         return view('admin.publicaciones.edit', compact('publicacion', 'estados'));
     }

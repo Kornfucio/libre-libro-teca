@@ -6,7 +6,7 @@
                 <h1 class="font-semibold text-xl text-gray-800 leading-tight">
                     Usuarios registrados
                 </h1>
-                <article class="bg-white shadow rounded-lg overflow-hidden">
+                <article class="bg-white shadow rounded-lg overflow-hidden" p-6>
 
                     <!-- Filtros por rol, estado y centro -->
                     <div class="p-4 border-b bg-gray-50">
@@ -24,7 +24,8 @@
                             <select name="centro_id" class="border p-2 rounded">
                                 <option value="">Todos los centros</option>
                                 @foreach ($centros as $centro)
-                                    <option value="{{ $centro->id }}" {{ request('centro_id') == $centro->id ? 'selected' : '' }}>
+                                    <option value="{{ $centro->id }}"
+                                        {{ request('centro_id') == $centro->id ? 'selected' : '' }}>
                                         {{ $centro->nombre_centro }}
                                     </option>
                                 @endforeach
@@ -34,7 +35,8 @@
                             <select name="asignatura_id" class="border p-2 rounded">
                                 <option value="">Todo los estados</option>
                                 @foreach ($estados as $estado)
-                                    <option value="{{ $estado->id }}" {{ request('users.estado_id') == $estado->id ? 'selected' : '' }}>
+                                    <option value="{{ $estado->id }}"
+                                        {{ request('users.estado_id') == $estado->id ? 'selected' : '' }}>
                                         {{ $estado->nombre_estado }}
                                     </option>
                                 @endforeach
@@ -103,38 +105,45 @@
                                     </td>
 
                                     <!-- Acciones -->
-                                    <td class="px-4 py-2 space-x-2">
-                                        <!-- Ver detalle -->
-                                        <a href="{{ route('admin.users.show', $usuario->id) }}"
-                                            class="text-blue-600 hover:underline">
-                                            Ver
-                                        </a>
+                                    <td class="px-4 py-2">
+                                        <div class="flex items-center gap-2">
 
-                                        <!-- Editar -->
-                                        <a href="{{ route('admin.users.edit', $usuario->id) }}"
-                                            class="text-green-600 hover:underline">
-                                            Editar
-                                        </a>
-                                        <!-- Bloquear -->
-                                        <form action="{{ route('admin.users.block', $usuario->id) }}" method="POST"
-                                            style="display:inline;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" class="text-yellow-600 hover:underline">
-                                                Bloquear
-                                            </button>
-                                        </form>
+                                            <!-- VER -->
+                                            <a href="{{ route('admin.users.show', $usuario->id) }}"
+                                                class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">
+                                                Ver
+                                            </a>
 
-                                        <!-- Eliminar -->
-                                        <form action="{{ route('admin.users.destroy', $usuario->id) }}" method="POST"
-                                            style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:underline"
-                                                onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?')">
-                                                Eliminar
-                                            </button>
-                                        </form>
+                                            <!-- EDITAR -->
+                                            <a href="{{ route('admin.users.edit', $usuario->id) }}"
+                                                class="px-2 py-1 text-xs bg-yellow-400 text-[#1E88C8] rounded hover:bg-yellow-500">
+                                                Editar
+                                            </a>
+
+                                            <!-- BLOQUEAR -->
+                                            <form action="{{ route('admin.users.block', $usuario->id) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button
+                                                    class="px-2 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600">
+                                                    Bloquear
+                                                </button>
+                                            </form>
+
+                                            <!-- ELIMINAR -->
+                                            <form action="{{ route('admin.users.destroy', $usuario->id) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button
+                                                    class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                                                    onclick="return confirm('¿Eliminar usuario?')">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -144,13 +153,16 @@
                             @endforelse
                         </tbody>
                     </table>
+                    <div class="mt-4">
+                        {{ $usuarios->links() }}
+                    </div>
+                    <br>
                 </article>
-                <div class="mt-4">
-                    {{ $usuarios->links() }}
-                </div>
+
             </section>
             <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <x-boton-volver />
+            <div class="mt-6 px-4 pb-4">
+                <x-boton-volver :ruta="route('admin.users.index')" />
             </section>
 
         </main>

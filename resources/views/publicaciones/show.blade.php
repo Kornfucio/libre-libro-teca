@@ -43,9 +43,7 @@
             <!-- BOTONES -->
             <div class="mt-6 flex gap-4">
 
-                <a href="{{ url()->previous() }}" class="px-4 py-2 bg-gray-500 text-white rounded">
-                    Volver
-                </a>
+                <x-boton-volver :ruta="route('publicaciones.mias')" />
 
                 @auth
                     @if($publicacion->usuario_id != auth()->id())

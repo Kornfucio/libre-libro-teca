@@ -55,7 +55,7 @@ class CentroController extends Controller
     // EDITAR
     public function edit(CentroEducativo $centro)
     {
-        $estados = Estado::all();
+        $estados = Estado::whereIn('id', [1, 2])->get();
         return view('admin.centros.edit', compact('centro', 'estados'));
     }
 
@@ -67,7 +67,8 @@ class CentroController extends Controller
             'estado_id' => 'required|exists:estados,id'
         ]);
 
-        $centro->update($request->only('nombre', 'estado_id'));
+        $centro->update($request->only('nombre_centro', 'estado_id'));
+
 
         return redirect()->route('admin.centros.index')
             ->with('success', 'Centro actualizado');

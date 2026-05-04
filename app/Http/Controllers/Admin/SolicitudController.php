@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SolicitudIntercambio;
+use App\Models\Intercambio;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudController extends Controller
 {
@@ -69,18 +71,44 @@ class SolicitudController extends Controller
     }
 
     // Finalizar solicitud
-    public function finalizar($id)
-    {
-        $solicitud = SolicitudIntercambio::findOrFail($id);
+public function finalizar($id)
+{
+    $solicitud = SolicitudIntercambio::findOrFail($id);
 
-        // Solo permitir finalizar si está aceptada (ajusta si quieres)
-        if ($solicitud->estado_id != 9) {
-            return redirect()->back()->with('error', 'Solo se pueden finalizar solicitudes aceptadas');
+    // Solo permitir si está aceptada
+    if ($solicitud->estado_id != 9) {
+        return back()->with('error', 'Solo se pueden finalizar solicitudes aceptadas');
+    }
+
+    DB::beginTransaction();
+
+    try {
+
+        // Evitar duplicados
+        if (Intercambio::where('solicitud_id', $solicitud->id)->exists()) {
+            DB::rollBack();
+            return back()->with('error', 'Este intercambio ya fue registrado');
         }
 
-        $solicitud->estado_id = 15; // finalizada
+        // Crear intercambio
+        Intercambio::create([
+            'solicitud_id' => $solicitud->id,
+            'fecha_confirmacion' => now(),
+            'estado_id' => 15, // finzalizado
+        ]);
+
+        // Cambiar estado de la solicitud
+        $solicitud->estado_id = 11; // completada
         $solicitud->save();
 
-        return redirect()->back()->with('success', 'Solicitud finalizada correctamente.');
+        DB::commit();
+
+        return back()->with('success', 'Intercambio finalizado correctamente');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+        return back()->with('error', 'Error al finalizar el intercambio');
     }
+}
 }

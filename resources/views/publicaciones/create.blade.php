@@ -93,10 +93,7 @@
                     <div class="flex justify-between items-center">
 
                         <!-- VOLVER -->
-                        <a href="{{ route('publicaciones.index') }}"
-                           class="px-4 py-2 bg-gray-500 text-white rounded hover:opacity-90">
-                            ← Volver
-                        </a>
+                        <x-boton-volver />
 
                         <!-- PUBLICAR -->
                         <button type="submit" id="btnSubmit"

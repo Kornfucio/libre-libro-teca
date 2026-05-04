@@ -57,7 +57,7 @@
 
                                 <!-- Ver detalle de la publicación -->
                                 <a href="{{ route('publicaciones.show', $solicitud->publicacion) }}"
-                                   class="text-blue-600 hover:underline">
+                                    class="text-blue-600 hover:underline">
                                     Ver detalles
                                 </a>
 
@@ -87,7 +87,7 @@
 
                             <!-- Solo se permite ver el detalle, ya no hay acciones -->
                             <a href="{{ route('publicaciones.show', $solicitud->publicacion) }}"
-                               class="text-blue-600 hover:underline">
+                                class="text-blue-600 hover:underline">
                                 Ver detalles
                             </a>
 
@@ -109,7 +109,7 @@
 
                             <!-- Solo permite consultar el detalle -->
                             <a href="{{ route('publicaciones.show', $solicitud->publicacion) }}"
-                               class="text-blue-600 hover:underline">
+                                class="text-blue-600 hover:underline">
                                 Ver detalles
                             </a>
 
@@ -205,8 +205,16 @@
                             <div>
                                 @if($solicitud->estado_id == 9)
                                     <span class="text-green-600 font-semibold">Aceptada</span>
-                                @else
+
+                                @elseif($solicitud->estado_id == 11)
+                                    <span class="text-blue-600 font-semibold">Finalizada</span>
+
+                                @elseif($solicitud->estado_id == 10)
                                     <span class="text-red-600 font-semibold">Rechazada</span>
+
+                                @elseif($solicitud->estado_id == 13)
+                                    <span class="text-gray-600 font-semibold">Cancelada</span>
+
                                 @endif
                             </div>
 
@@ -231,12 +239,7 @@
 
         <!-- Botón de vuelta al dashboard -->
         <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-4">
-                <a href="{{ route('dashboard') }}"
-                   class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
-                    Volver
-                </a>
-            </div>
+            <x-boton-volver />
         </section>
     </main>
 

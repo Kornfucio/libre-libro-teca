@@ -63,10 +63,7 @@
             </article>
         </section>
         <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <a href="{{ route('admin.users.index') }}"
-                class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
-                Volver
-            </a>
+            <x-boton-volver :ruta="route('admin.users.index')" />
         </section>
     </main>
 

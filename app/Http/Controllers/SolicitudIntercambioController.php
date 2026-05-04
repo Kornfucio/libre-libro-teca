@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Mail;
 class SolicitudIntercambioController extends Controller
 {
     /**
-     * ESTE CONTROLOR GESTIONA LAS SOLICITUDES DE INTERCAMBIO:
+     * ESTE CONTROLADOR GESTIONA LAS SOLICITUDES DE INTERCAMBIO:
      * - index(): Muestra las solicitudes enviadas y recibidas
      * - store(): Crea una nueva solicitud
      * - aceptar(): Acepta una solicitud recibida
@@ -42,7 +42,7 @@ class SolicitudIntercambioController extends Controller
         $recibidasHistorico = SolicitudIntercambio::whereHas('publicacion', function ($query) {
             $query->where('usuario_id', auth()->id());
         })
-            ->whereIn('estado_id', [9, 10])
+            ->whereIn('estado_id', [9, 10, 11])
             ->with(['publicacion.centroLibro.libro', 'usuario', 'estado'])
             ->paginate(20, ['*'], 'historico_page');
 
@@ -53,6 +53,7 @@ class SolicitudIntercambioController extends Controller
         $pendientes = $enviadas->where('estado_id', 8);
         $aceptadas = $enviadas->where('estado_id', 9);
         $rechazadas = $enviadas->where('estado_id', 10);
+        $completadas = $enviadas->where('estado_id', 11);
 
         return view('solicitudes.index', compact(
             'enviadas',
@@ -61,7 +62,8 @@ class SolicitudIntercambioController extends Controller
             'aceptadasCount',
             'pendientes',
             'aceptadas',
-            'rechazadas'
+            'rechazadas',
+            'completadas'
         ));
     }
 
@@ -176,7 +178,7 @@ class SolicitudIntercambioController extends Controller
     }
 
     // Método para que la transacción se finalice una vez que el intercambio se ha realizado
-    public function finalizar($id)
+    /*public function finalizar($id)
     {
         $solicitud = SolicitudIntercambio::findOrFail($id);
 
@@ -184,9 +186,33 @@ class SolicitudIntercambioController extends Controller
             return back()->with('error', 'Solo se pueden finalizar solicitudes aceptadas');
         }
 
-        $solicitud->estado_id = 15; // finalizada
-        $solicitud->save();
+        DB::beginTransaction();
 
-        return back()->with('success', 'Intercambio finalizado');
-    }
+        try {
+            //Evitar duplicados
+            if (Intercambio::where('solicitud_id', $solicitud->id)->exists()) {
+                DB::rollBack();
+                return back()->with('error', 'Este intercambio ya ha sido finalizado');
+            }
+            // Crear registro de intercambio
+            Intercambio::create([
+                'solicitud_id' => $solicitud->id,
+                'fecha_confirmacion' => now(),
+                'estado_id' => 15, // finalizado
+            ]);
+
+            //Cambiar estado de la solicitud a finalizada
+                $solicitud->estado_id = 11; // completada
+                $solicitud->save();
+
+                DB::commit();
+
+                return back()->with('success', 'Intercambio finalizado correctamente');
+
+
+            } catch (\Exception $e) {
+
+            DB::rollBack();
+            return back()->with('error', 'Error al finalizar el intercambio');
+        }*/
 }

@@ -9,7 +9,7 @@
                 <!-- Botón para crear un nuevo centro -->
                 <div class="p-4 border-b">
                     <a href="{{ route('admin.centros.create') }}"
-                       class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                         + Nuevo centro
                     </a>
                 </div>
@@ -43,11 +43,11 @@
 
                                     <!-- Uso colores según el estado -->
                                     <span class="px-2 py-1 rounded text-white text-sm
-                                        @if($centro->estado && $centro->estado->nombre_estado == 'activo') bg-green-500
-                                        @elseif($centro->estado && $centro->estado->nombre_estado == 'inactivo') bg-red-500
-                                        @else bg-gray-500
-                                        @endif
-                                    ">
+                                            @if($centro->estado && $centro->estado->nombre_estado == 'activo') bg-green-500
+                                            @elseif($centro->estado && $centro->estado->nombre_estado == 'inactivo') bg-red-500
+                                            @else bg-gray-500
+                                            @endif
+                                        ">
                                         <!-- Si no hay estado, muestro texto por defecto -->
                                         {{ $centro->estado->nombre_estado ?? 'Sin estado' }}
                                     </span>
@@ -59,7 +59,7 @@
 
                                     <!-- Enlace para editar el centro -->
                                     <a href="{{ route('admin.centros.edit', $centro->id) }}"
-                                       class="text-yellow-600 hover:underline">
+                                        class="text-yellow-600 hover:underline">
                                         Editar
                                     </a>
 
@@ -67,7 +67,7 @@
 
                             </tr>
 
-                        <!-- Si no hay centros -->
+                            <!-- Si no hay centros -->
                         @empty
                             <tr>
                                 <td colspan="3" class="px-4 py-6 text-center text-gray-500">
@@ -84,17 +84,10 @@
                 <div class="p-4">
                     {{ $centros->links() }}
                 </div>
-
             </article>
-
-            <!-- Botón para volver -->
-            <div class="mt-4">
-                <a href="{{ route('dashboard') }}"
-                   class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
-                    Volver
-                </a>
-            </div>
-
+        </section>
+        <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <x-boton-volver/>
         </section>
     </main>
 

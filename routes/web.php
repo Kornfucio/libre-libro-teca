@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PublicacionController as AdminPublicacionControll
 use App\Http\Controllers\Admin\SolicitudController;
 use App\Http\Controllers\Admin\CentroController;
 use App\Http\Controllers\Admin\LibroController;
+use App\Http\Controllers\DashboardController;
 
 
 /*
@@ -21,6 +22,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+/*
+RUTAS DE USUARIO GUEST
+Rutas accesibles sin estar logueado
+*/
+Route::get('/publicaciones', [PublicacionController::class, 'index'])
+        ->name('publicaciones.index');
+
+
 
 /*
 RUTAS DE USUARIO (LOGIN)
@@ -28,18 +37,22 @@ Rutas normales cuando el usuario está logueado
 */
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
     // PUBLICACIONES
-    Route::get('/publicaciones', [PublicacionController::class, 'index'])
-        ->name('publicaciones.index');
+
+    Route::resource('publicaciones', PublicacionController::class)
+        ->except(['index', 'show']);
 
     Route::get('/mis-publicaciones', [PublicacionController::class, 'misPublicaciones'])
         ->name('publicaciones.mias');
 
-    Route::resource('publicaciones', PublicacionController::class);
+    Route::get('/publicaciones/{id}', [PublicacionController::class, 'show'])
+        ->name('publicaciones.show');
+
+    Route::get('/publicaciones/create', [PublicacionController::class, 'create'])
+    ->name('publicaciones.create');
 
     // SOLICITUDES
     Route::resource('solicitudes', SolicitudIntercambioController::class)
@@ -51,6 +64,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::patch('/solicitudes/{solicitud}/aceptar', [SolicitudIntercambioController::class, 'aceptar'])
         ->name('solicitudes.aceptar');
+
+    Route::patch('/solicitudes/{solicitud}/rechazar', [SolicitudIntercambioController::class, 'rechazar'])
+    ->name('solicitudes.rechazar');
 
     Route::patch('/solicitudes/{solicitud}/cancelar', [SolicitudIntercambioController::class, 'cancelar'])
         ->name('solicitudes.cancelar');
@@ -106,11 +122,19 @@ Route::middleware(['auth', 'isadmin'])
         ->except(['show', 'destroy']);
 
     // Libros
-    Route::get('/libros', [LibroController::class, 'index'])
-        ->name('libros.index');
+     Route::resource('libros', LibroController::class);
 
+     // Pantalla para asignar centros
+    Route::get('libros/{libro}/asignar', [LibroController::class, 'asignar'])
+        ->name('libros.asignar');
+
+    // Guardar asignaciones
+    Route::post('libros/{libro}/asignar', [LibroController::class, 'guardarAsignacion'])
+        ->name('libros.guardarAsignacion');
 
 });
+
+
 
 // Páginas informativas (menú lateral)
 
@@ -135,9 +159,9 @@ Route::middleware(['auth', 'isadmin'])
 
 //Home del usuario validado
 
-    Route::middleware(['auth'])->get('/dashboard', function () {
+    /*Route::middleware(['auth'])->get('/dashboard', function () {
     return view('dashboard');
-    })->name('dashboard');
+    })->name('dashboard');*/
 
 
     require __DIR__.'/auth.php';

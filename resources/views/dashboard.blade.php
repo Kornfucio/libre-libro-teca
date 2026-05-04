@@ -47,7 +47,7 @@
                             </p>
 
                             <a href="{{ route('publicaciones.mias') }}"
-                               class="inline-block mt-4 px-4 py-2 bg-[#FF7A00] text-white rounded hover:opacity-90">
+                                class="inline-block mt-4 px-4 py-2 bg-[#FF7A00] text-white rounded hover:opacity-90">
                                 Acceder
                             </a>
                         </div>
@@ -62,7 +62,7 @@
                             </p>
 
                             <a href="{{ route('publicaciones.index') }}"
-                               class="inline-block mt-4 px-4 py-2 bg-[#FF7A00] text-white rounded hover:opacity-90">
+                                class="inline-block mt-4 px-4 py-2 bg-[#FF7A00] text-white rounded hover:opacity-90">
                                 Acceder
                             </a>
                         </div>
@@ -73,12 +73,54 @@
                                 Solicitudes
                             </h3>
                             <p class="text-sm text-gray-600 mt-2">
-                                Consulta el estado de tus intercambios.
+                                Consulta el estado de tus intercambios tanto enviados como recibidos.
                             </p>
 
                             <a href="{{ route('solicitudes.index') }}"
-                               class="inline-block mt-4 px-4 py-2 bg-[#FF7A00] text-white rounded hover:opacity-90">
+                                class="inline-block mt-4 px-4 py-2 bg-[#FF7A00] text-white rounded hover:opacity-90">
                                 Acceder
+                            </a>
+                        </div>
+                        {{-- Botón para publicar en el propio dashboard --}}
+                        <div class="bg-white shadow rounded-lg p-6 hover:shadow-lg transition">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Publicar libro
+                            </h3>
+                            <p class="text-sm text-gray-600 mt-2">
+                                Añade un nuevo libro a la plataforma.
+                            </p>
+
+                            <a href="{{ route('publicaciones.create') }}"
+                                class="inline-block mt-4 px-4 py-2 bg-[#FF7A00] text-white rounded hover:opacity-90">
+                                Acceder
+                            </a>
+                        </div>
+                        {{-- Tablón de anuncios --}}
+                        <div class="bg-white shadow rounded-lg p-6 hover:shadow-lg transition">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Tablón de anuncios
+                            </h3>
+                            <p class="text-sm text-gray-600 mt-2">
+                                Consulta los últimos anuncios publicados.
+                            </p>
+
+                            <a href="#"
+                                class="inline-block mt-4 px-4 py-2 bg-[#FF7A00] text-white rounded hover:opacity-90">
+                                Proximamente
+                            </a>
+                        </div>
+                        {{-- Buzón de mensajes --}}
+                        <div class="bg-white shadow rounded-lg p-6 hover:shadow-lg transition">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Buzón de mensajes
+                            </h3>
+                            <p class="text-sm text-gray-600 mt-2">
+                                Consulta los mensajes recibidos.
+                            </p>
+
+                            <a href="#"
+                                class="inline-block mt-4 px-4 py-2 bg-[#FF7A00] text-white rounded hover:opacity-90">
+                                Proximamente
                             </a>
                         </div>
 
@@ -98,8 +140,11 @@
                     <h3 class="text-md font-semibold text-gray-700 mb-2">
                         Resumen general
                     </h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="max-w-xs mx-auto">
+                        <canvas id="dashboardChart"></canvas>
+                    </div>
+                    <br>
+                    {{-- <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                         <div class="bg-white p-6 rounded shadow text-center">
                             <p class="text-sm text-gray-500">Usuarios</p>
@@ -122,7 +167,7 @@
                             </p>
                         </div>
 
-                    </div>
+                    </div>--}}
                 </div>
 
                 {{-- Bloque de administración --}}
@@ -144,7 +189,7 @@
                             </p>
 
                             <a href="{{ route('admin.users.index') }}"
-                               class="inline-block mt-4 px-4 py-2 bg-[#1E88C8] text-white rounded">
+                                class="inline-block mt-4 px-4 py-2 bg-[#1E88C8] text-white rounded">
                                 Acceder
                             </a>
                         </div>
@@ -159,7 +204,7 @@
                             </p>
 
                             <a href="{{ route('admin.publicaciones.index') }}"
-                               class="inline-block mt-4 px-4 py-2 bg-[#1E88C8] text-white rounded">
+                                class="inline-block mt-4 px-4 py-2 bg-[#1E88C8] text-white rounded">
                                 Acceder
                             </a>
                         </div>
@@ -174,7 +219,7 @@
                             </p>
 
                             <a href="{{ route('admin.solicitudes.index') }}"
-                               class="inline-block mt-4 px-4 py-2 bg-[#1E88C8] text-white rounded">
+                                class="inline-block mt-4 px-4 py-2 bg-[#1E88C8] text-white rounded">
                                 Acceder
                             </a>
                         </div>
@@ -189,7 +234,7 @@
                             </p>
 
                             <a href="{{ route('admin.centros.index') }}"
-                               class="inline-block mt-4 px-4 py-2 bg-[#1E88C8] text-white rounded">
+                                class="inline-block mt-4 px-4 py-2 bg-[#1E88C8] text-white rounded">
                                 Acceder
                             </a>
                         </div>
@@ -204,7 +249,7 @@
                             </p>
 
                             <a href="{{ route('admin.libros.index') }}"
-                               class="inline-block mt-4 px-4 py-2 bg-[#1E88C8] text-white rounded">
+                                class="inline-block mt-4 px-4 py-2 bg-[#1E88C8] text-white rounded">
                                 Acceder
                             </a>
                         </div>
@@ -230,4 +275,30 @@
 
         </div>
     </div>
+    @push('scripts')
+        <script>
+            const ctx = document.getElementById('dashboardChart');
+
+            const stats = @json([
+                'publicaciones' => $totalPublicaciones ?? 0,
+                'usuarios' => $totalUsuarios ?? 0,
+                'solicitudes' => $totalSolicitudes ?? 0
+            ]);
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Publicaciones', 'Usuarios', 'Solicitudes'],
+                    datasets: [{
+                        label: 'Totales',
+                        data: [
+                            stats.publicaciones,
+                            stats.usuarios,
+                            stats.solicitudes
+                        ]
+                    }]
+                }
+            });
+        </script>
+    @endpush
 </x-app-layout>

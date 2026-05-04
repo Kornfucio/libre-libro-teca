@@ -22,12 +22,12 @@
                             Nombre del centro
                         </label>
 
-                        <input type="text" name="nombre"
-                               value="{{ old('nombre', $centro->nombre_centro) }}"
+                        <input type="text" name="nombre_centro"
+                               value="{{ old('nombre_centro', $centro->nombre_centro) }}"
                                class="mt-1 block w-full border rounded p-2">
 
                         <!-- Error de validación -->
-                        @error('nombre')
+                        @error('nombre_centro')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>

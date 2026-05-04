@@ -11,13 +11,14 @@ class CentroEducativo extends Model
     protected $primaryKey= 'id';
 
     protected $fillable = [
-        'nombre',
-        'codigo',
+        'nombre_centro',
+        'cif_centro',
         'direccion',
         'localidad',
+        'provincia',
         'telefono',
         'email',
-        'estado'
+        'estado_id',
     ];
 
     public function usuarios()
@@ -32,6 +33,6 @@ class CentroEducativo extends Model
 
     public function estado()
     {
-        return $this->belongsTo(estado::class, 'estado_id');
+        return $this->belongsTo(Estado::class, 'estado_id');
     }
 }

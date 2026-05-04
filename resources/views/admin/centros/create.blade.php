@@ -11,7 +11,6 @@
                 </h2>
 
                 <!-- Formulario -->
-                dd($request->all());
                 <form method="POST" action="{{ route('admin.centros.store') }}">
                     @csrf
 

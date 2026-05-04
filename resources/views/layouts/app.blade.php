@@ -41,7 +41,7 @@
 
                             <span class="text-sm">
                                 ¿Aún no eres usuario?
-                                <a href="{{ route('register') }}" class="underline text-red-500">
+                                <a href="{{ route('register') }}" class="underline text-white-500">
                                     Date de alta aquí
                                 </a>
                             </span>
@@ -107,13 +107,8 @@
     </footer>
 
     <!-- TOAST DE MENSAJES -->
-    <div
-        x-data="{ show: true }"
-        x-show="show"
-        x-init="setTimeout(() => show = false, 3000)"
-        x-transition
-        class="fixed top-5 right-5 z-50"
-    >
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" x-transition
+        class="fixed top-5 right-5 z-50">
 
         @if(session('success'))
             <div class="bg-green-500 text-white px-6 py-3 rounded shadow-lg mb-2 flex items-center justify-between gap-4">
@@ -130,6 +125,8 @@
         @endif
 
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @stack('scripts')
 
 </body>
 

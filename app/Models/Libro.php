@@ -15,7 +15,8 @@ class Libro extends Model
         'asignatura_id',
         'curso_id',
         'editorial',
-        'ISBN'
+        'ISBN',
+        'estado_id'
     ];
     public function curso()
     {
@@ -34,7 +35,7 @@ class Libro extends Model
 
     public function centros()
     {
-        return $this->hasMany(CentroLibro::class, 'libro_id');
+        return $this->hasMany (CentroLibro::class, 'libro_id');
     }
 
     public function index()

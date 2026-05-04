@@ -9,7 +9,7 @@
             <h1 class="font-semibold text-xl text-gray-800 leading-tight">
                 Libros disponibles
             </h1>
-
+             @auth
             <nav>
                 <!-- Acceso directo a crear nueva publicación -->
                 <a href="{{ route('publicaciones.create') }}"
@@ -17,6 +17,7 @@
                     + Publicar libro
                 </a>
             </nav>
+             @endauth
         </header>
     </x-slot>
 

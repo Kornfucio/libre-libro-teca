@@ -51,7 +51,7 @@
                         @foreach($estados as $estado)
                             <option value="{{ $estado->id }}"
                                 {{ $publicacion->estado_id == $estado->id ? 'selected' : '' }}>
-                                {{ $estado->nombre }}
+                                {{ $estado->nombre_estado }}
                             </option>
                         @endforeach
                     </select>
@@ -90,10 +90,7 @@
                 <!-- BOTONES -->
                 <div class="flex justify-between items-center pt-4">
 
-                    <a href="{{ route('admin.publicaciones.index') }}"
-                       class="text-gray-600 hover:underline">
-                        Volver
-                    </a>
+                    <x-boton-volver :ruta="route('admin.publicaciones.index')" />
 
                     <button
                         type="submit"

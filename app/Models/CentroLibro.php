@@ -26,6 +26,6 @@ class CentroLibro extends Model
 
     public function publicaciones()
     {
-        return $this->hasMany(Publicacion::class, 'centro_libro_id');
+        return $this->hasMany(Publicacion::class, 'centros_libro_id');
     }
 }

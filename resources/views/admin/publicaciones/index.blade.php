@@ -175,8 +175,8 @@
             </div>
 
         </section>
-        <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <x-boton-volver />
-        </section>
+            <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <x-boton-volver />
+            </section>
     </main>
 </x-app-layout>
