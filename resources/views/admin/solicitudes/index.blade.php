@@ -29,7 +29,10 @@
                                 // Determinamos el color del estado para evitar lógica dentro del class
                                 $colores = [
                                     8 => 'bg-yellow-500', // pendiente
-                                    9 => 'bg-green-500',  // aceptada
+                                    9 => 'bg-orange-500',  // aceptada
+                                    11 => 'bg-green-500',   // completada
+                                    13 => 'bg-red-500',    // cancelada
+
                                 ];
 
                                 $color = $colores[$solicitud->estado_id] ?? 'bg-red-500';
@@ -54,7 +57,7 @@
 
                                 <!-- Centro -->
                                 <td class="p-2 border">
-                                    {{ $solicitud->publicacion->centroLibro->centro->nombre ?? 'N/A' }}
+                                    {{ $solicitud->publicacion->centroLibro->centro->nombre_centro ?? 'N/A' }}
                                 </td>
 
                                 <!-- Estado -->
