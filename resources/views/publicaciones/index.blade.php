@@ -148,7 +148,7 @@
 
                                         @auth
                                             <!-- VER -->
-                                            <a href="{{ route('publicaciones.show', $publicacion->id) }}"
+                                           <a href="{{ route('publicaciones.show', ['id' => $publicacion->id, 'from' => 'index']) }}"
                                                 class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
                                                 Ver
                                             </a>

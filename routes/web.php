@@ -43,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
     // PUBLICACIONES
 
     Route::resource('publicaciones', PublicacionController::class)
-        ->except(['index', 'show']);
+        ->except(['show']);
 
     Route::get('/mis-publicaciones', [PublicacionController::class, 'misPublicaciones'])
         ->name('publicaciones.mias');

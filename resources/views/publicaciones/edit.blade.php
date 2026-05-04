@@ -11,6 +11,7 @@
             <form method="POST" action="{{ route('publicaciones.update', $publicacion->id) }}"
                 enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="from" value="{{ request('from') }}">
                 @method('PUT')
 
                 <!-- IMAGEN ACTUAL -->

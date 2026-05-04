@@ -64,7 +64,7 @@
                                     <div class="flex flex-wrap gap-2">
 
                                         <!-- VER -->
-                                        <a href="{{ route('publicaciones.show', $publicacion->id) }}"
+                                        <a href="{{ route('publicaciones.show', ['id' => $publicacion->id, 'from' => 'mias']) }}"
                                             class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition">
                                             Ver
                                         </a>

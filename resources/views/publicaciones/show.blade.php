@@ -43,7 +43,11 @@
             <!-- BOTONES -->
             <div class="mt-6 flex gap-4">
 
-                <x-boton-volver :ruta="route('publicaciones.mias')" />
+                <x-boton-volver :ruta="
+                     request('from') === 'mias'
+                        ? route('publicaciones.mias')
+                        : route('publicaciones.index')
+                " />
 
                 @auth
                     @if($publicacion->usuario_id != auth()->id())

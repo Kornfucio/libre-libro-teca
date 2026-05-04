@@ -218,9 +218,13 @@ class PublicacionController extends Controller
             'descripcion' => $request->descripcion
         ]);
 
-        return redirect()
-            ->route('publicaciones.show', $publicacion->id)
-            ->with('success', 'Publicación actualizada');
+        $from = $request->input('from');
+
+        return redirect()->route( //ruta de vuelta dependiendo de dónde venga el usuario (mis publicaciones o listado general)
+                    $from === 'mias'
+        ? 'publicaciones.mias'
+        : 'publicaciones.index'
+        )->with('success', 'Publicación actualizada');
     }
 
     /**
