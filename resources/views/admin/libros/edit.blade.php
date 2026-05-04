@@ -104,7 +104,7 @@
                     <div class="flex justify-between">
 
                         <!-- Botón volver -->
-                        <x-boton-volver />
+                        <x-boton-volver ruta="{{ route('admin.libros.index') }}" />
 
                         <!-- Botón guardar -->
                         <button type="submit"

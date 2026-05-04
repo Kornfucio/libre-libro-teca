@@ -162,7 +162,7 @@
             </section>
             <section class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mt-6 px-4 pb-4">
-                <x-boton-volver :ruta="route('admin.users.index')" />
+                <x-boton-volver :ruta="route('dashboard')" />
             </section>
 
         </main>
