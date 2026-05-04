@@ -9,15 +9,15 @@
             <h1 class="font-semibold text-xl text-gray-800 leading-tight">
                 Libros disponibles
             </h1>
-             @auth
-            <nav>
-                <!-- Acceso directo a crear nueva publicación -->
-                <a href="{{ route('publicaciones.create') }}"
-                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                    + Publicar libro
-                </a>
-            </nav>
-             @endauth
+            @auth
+                <nav>
+                    <!-- Acceso directo a crear nueva publicación -->
+                    <a href="{{ route('publicaciones.create') }}"
+                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        + Publicar libro
+                    </a>
+                </nav>
+            @endauth
         </header>
     </x-slot>
 
@@ -34,7 +34,8 @@
                         <select name="etapa_id" id="etapa" class="border p-2 rounded">
                             <option value="">Todas las etapas</option>
                             @foreach ($etapas as $etapa)
-                                <option value="{{ $etapa->id }}" {{ request('etapa_id') == $etapa->id ? 'selected' : '' }}>
+                                <option value="{{ $etapa->id }}"
+                                    {{ request('etapa_id') == $etapa->id ? 'selected' : '' }}>
                                     {{ $etapa->nombre_etapa }}
                                 </option>
                             @endforeach
@@ -44,8 +45,7 @@
                         <select name="curso_id" id="curso" class="border p-2 rounded">
                             <option value="">Todos los cursos</option>
                             @foreach ($cursos as $curso)
-                                <option value="{{ $curso->id }}"
-                                    data-etapa="{{ $curso->etapa_id }}"
+                                <option value="{{ $curso->id }}" data-etapa="{{ $curso->etapa_id }}"
                                     {{ request('curso_id') == $curso->id ? 'selected' : '' }}>
                                     {{ $curso->nombre_curso }}
                                 </option>
@@ -143,95 +143,82 @@
                                 </td>
 
                                 <!-- Acciones disponibles -->
-                                <td class="px-4 py-2 space-x-2">
+                                <td class="px-4 py-2">
+                                    <div class="flex flex-wrap gap-2">
 
-                                    <!-- Ver detalle -->
-                                    @auth
-                                        <a href="{{ route('publicaciones.show', $publicacion->id) }}"
-                                            class="text-blue-600 hover:underline">
-                                            Ver
-                                        </a>
-                                    @endauth
-
-                                    <!-- Invitado debe iniciar sesión -->
-                                    @guest
-                                        <a href="{{ route('login') }}"
-                                            class="text-blue-600 hover:underline">
-                                            Inicia sesión
-                                        </a>
-                                    @endguest
-
-                                    @auth
-                                        <!-- Si es el propietario -->
-                                        @if($publicacion->usuario_id === auth()->id())
-
-                                            <!-- Editar publicación -->
-                                            <a href="{{ route('publicaciones.edit', $publicacion->id) }}"
-                                                class="text-yellow-600 hover:underline">
-                                                Editar
+                                        @auth
+                                            <!-- VER -->
+                                            <a href="{{ route('publicaciones.show', $publicacion->id) }}"
+                                                class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                                                Ver
                                             </a>
+                                        @endauth
 
-                                            <!-- Eliminar publicación -->
-                                            <form method="POST"
-                                                action="{{ route('publicaciones.destroy', $publicacion->id) }}"
-                                                class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="text-red-600 hover:underline"
-                                                    onclick="return confirm('¿Seguro que quieres eliminar esta publicación?')">
-                                                    Eliminar
-                                                </button>
-                                            </form>
+                                        @guest
+                                            <a href="{{ route('login') }}"
+                                                class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200">
+                                                Inicia sesión
+                                            </a>
+                                        @endguest
 
-                                        @else
+                                        @auth
+                                            @if ($publicacion->usuario_id === auth()->id())
+                                                <!-- EDITAR -->
+                                                <a href="{{ route('publicaciones.edit', $publicacion->id) }}"
+                                                    class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200">
+                                                    Editar
+                                                </a>
 
-                                            <!-- Comprobación de si ya existe solicitud del usuario -->
-                                            @php
-                                                $solicitudUsuario = $publicacion->solicitudes
-                                                    ->where('usuario_id', auth()->id())
-                                                    ->first();
-                                            @endphp
-
-                                            <!-- Si no ha solicitado -->
-                                            @if(!$solicitudUsuario)
-
-                                                <form method="POST" action="{{ route('solicitudes.store', $publicacion->id) }}"
-                                                class="inline">
-
-                                                @csrf
-
-                                                <button type="submit"
-                                                    class="text-green-600 hover:underline">
-                                                    Solicitar
-                                                 </button>
-                                                </form>
-
-                                            <!-- Estados de la solicitud -->
-                                            @elseif($solicitudUsuario->estado_id == 8)
-                                                <span class="text-yellow-600">Pendiente</span>
-
-                                            @elseif($solicitudUsuario->estado_id == 9)
-                                                <span class="text-green-600">Aceptado</span>
-
-                                            @elseif($solicitudUsuario->estado_id == 10)
-
-                                                <!-- Permite volver a intentar -->
+                                                <!-- ELIMINAR -->
                                                 <form method="POST"
-                                                    action="{{ route('solicitudes.store', $publicacion->id) }}"
-                                                    class="inline">
+                                                    action="{{ route('publicaciones.destroy', $publicacion->id) }}">
                                                     @csrf
+                                                    @method('DELETE')
                                                     <button type="submit"
-                                                        class="text-red-600 hover:underline">
-                                                        Reintentar
+                                                        class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200"
+                                                        onclick="return confirm('¿Eliminar publicación?')">
+                                                        Eliminar
                                                     </button>
                                                 </form>
+                                            @else
+                                                @php
+                                                    $solicitudUsuario = $publicacion->solicitudes
+                                                        ->where('usuario_id', auth()->id())
+                                                        ->first();
+                                                @endphp
 
+                                                @if (!$solicitudUsuario)
+                                                    <!-- SOLICITAR -->
+                                                    <form method="POST"
+                                                        action="{{ route('solicitudes.store', $publicacion->id) }}">
+                                                        @csrf
+                                                        <button type="submit"
+                                                            class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200">
+                                                            Solicitar
+                                                        </button>
+                                                    </form>
+                                                @elseif($solicitudUsuario->estado_id == 8)
+                                                    <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded">
+                                                        Pendiente
+                                                    </span>
+                                                @elseif($solicitudUsuario->estado_id == 9)
+                                                    <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded">
+                                                        Aceptado
+                                                    </span>
+                                                @elseif($solicitudUsuario->estado_id == 10)
+                                                    <form method="POST"
+                                                        action="{{ route('solicitudes.store', $publicacion->id) }}">
+                                                        @csrf
+                                                        <button type="submit"
+                                                            class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200">
+                                                            Reintentar
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             @endif
+                                        @endauth
 
-                                        @endif
-                                    @endauth
-
+                                    </div>
                                 </td>
                             </tr>
 

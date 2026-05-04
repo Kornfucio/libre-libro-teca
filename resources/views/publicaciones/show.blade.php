@@ -26,7 +26,7 @@
             </h2>
 
             <p><strong>Autor:</strong> {{ $publicacion->centroLibro->libro->autor }}</p>
-            <p><strong>Curso:</strong> {{ $publicacion->centroLibro->libro->curso->numero }}</p>
+            <p><strong>Curso:</strong> {{ $publicacion->centroLibro->libro->curso->nombre_curso }}</p>
             <p><strong>Asignatura:</strong> {{ $publicacion->centroLibro->libro->asignatura->asignatura }}</p>
 
             <!-- DESCRIPCIÓN -->
@@ -51,7 +51,7 @@
                         @if(!$solicitudUsuario)
                             <form method="POST" action="{{ route('solicitudes.store', $publicacion->id) }}">
                                 @csrf
-                                <button class="inline-block px-4 py-2 bg-[#FFC107] text-white rounded hover:opacity-90">
+                                <button class="inline-block px-4 py-2 bg-orange-500 text-white rounded hover:opacity-90">
                                     Solicitar intercambio
                                 </button>
                             </form>
