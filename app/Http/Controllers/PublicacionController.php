@@ -137,6 +137,13 @@ class PublicacionController extends Controller
             $rutaImagen = 'images/no-image.png';
         }
 
+        $centroLibro = CentroLibro::findOrFail($request->centro_libro_id);
+
+        if ($centroLibro->libro->estado_id != 1)// el libro no está activo
+        {
+            return back()->with('error', 'El libro seleccionado no está activo para este curso');
+        }
+
         Publicacion::create([
             'usuario_id' => Auth::id(),
             'centros_libro_id' => $request->centro_libro_id,
