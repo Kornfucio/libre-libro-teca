@@ -30,49 +30,51 @@
 
                 <!-- NAV -->
                 <nav class="flex justify-center md:justify-end">
+                    <! --Usuario no autenticado-->
+                        @guest
+                            <div class="flex flex-col md:flex-row items-center gap-3 md:gap-6 text-center md:text-right">
 
-                    @guest
-                        <div class="flex flex-col md:flex-row items-center gap-3 md:gap-6 text-center md:text-right">
-
-                            <a href="{{ route('login') }}"
-                                class="inline-block px-6 py-3 text-lg font-bold bg-yellow-400 text-[#1E88C8] rounded-full hover:bg-yellow-500 transition shadow-md">
-                                Inicia sesión
-                            </a>
-
-                            <span class="text-sm">
-                                ¿Aún no eres usuario?
-                                <a href="{{ route('register') }}" class="underline text-white-500">
-                                    Date de alta aquí
+                                <a href="{{ route('login') }}"
+                                    class="inline-block px-6 py-3 text-lg font-bold bg-yellow-400 text-[#1E88C8] rounded-full hover:bg-yellow-500 transition shadow-md">
+                                    Inicia sesión
                                 </a>
-                            </span>
 
-                        </div>
-                    @endguest
-
-                    @auth
-                        <div class="flex flex-col md:flex-row items-center gap-4">
-
-                            <div class="flex gap-4">
-                                <a href="{{ route('dashboard') }}" class="hover:underline">Dashboard</a>
-                                <a href="{{ route('publicaciones.index') }}" class="hover:underline">Libros</a>
-                                <a href="{{ route('solicitudes.index') }}" class="hover:underline">Solicitudes</a>
-                            </div>
-
-                            <div class="flex items-center gap-3">
-                                <span class="font-semibold">
-                                    👤 {{ Auth::user()->nombre }}
+                                <span class="text-sm">
+                                    ¿Aún no eres usuario?
+                                    <a href="{{ route('register') }}" class="underline text-white-500">
+                                        Date de alta aquí
+                                    </a>
                                 </span>
 
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button class="underline hover:opacity-80">
-                                        Salir
-                                    </button>
-                                </form>
                             </div>
+                        @endguest
+                        <!-- Usuario autenticado -->
+                        @auth
+                            <div class="flex flex-col md:flex-row items-center gap-4">
 
-                        </div>
-                    @endauth
+                                <div class="flex gap-4">
+                                    <a href="{{ route('dashboard') }}" class="hover:underline">Dashboard</a>
+                                    <a href="{{ route('publicaciones.index') }}" class="hover:underline">Libros</a>
+                                    <a href="{{ route('solicitudes.index') }}" class="hover:underline">Solicitudes</a>
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <span class="font-semibold">
+                                        <a href="{{ route('profile.edit') }}" class="underline">
+                                            👤 {{ Auth::user()->nombre }}
+                                        </a>
+                                    </span>
+
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button class="underline hover:opacity-80">
+                                            Salir
+                                        </button>
+                                    </form>
+                                </div>
+
+                            </div>
+                        @endauth
 
                 </nav>
 
