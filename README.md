@@ -1,4 +1,4 @@
-<p align="center"><img src="https://drive.google.com/file/d/12GdSYYd71UTWc8JYcwQ8LHKaoHtAk5UU/view?usp=sharing" width="400" alt="LibreLibroTeca Logo"></a></p>
+<p align="center"><img src="https://drive.google.com/uc?export=view&id="12GdSYYd71UTWc8JYcwQ8LHKaoHtAk5UU" width="400" alt="LibreLibroTeca Logo"></a></p>
 
 <p align="center">
 <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
