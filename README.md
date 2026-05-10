@@ -101,3 +101,4 @@ Este proyecto busca fomentar la economía circular dentro del ámbito educativo,
 ---
 
 # Estado del proyecto
+En desarrollo
